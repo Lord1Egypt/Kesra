@@ -1,0 +1,42 @@
+{
+  "world": 1,
+  "level": 1,
+  "name": "Astronomy — Stars & Constellations",
+  "theme": {
+    "background": "#0A0A2E",
+    "brick_colors": ["#FFD700", "#FF6B35", "#00D4FF", "#FF69B4", "#7CFC00"],
+    "particle": "stars"
+  },
+  "grid": {
+    "rows": 8,
+    "cols": 10,
+    "bricks": [
+      "GGGGGGGGGG",
+      "SSTT..TTSS",
+      "SSMMMMMMSS",
+      "HH..MM..HH",
+      "HHGG..GGHH",
+      ".HHRRRRHH.",
+      "..RGGGRR..",
+      "....MM...."
+    ]
+  },
+  "brick_types": {
+    "G": {"type": "gold", "hp": 1, "points": 100, "drop_chance": 0.3},
+    "S": {"type": "stone", "hp": 2, "points": 20, "drop_chance": 0.1},
+    "T": {"type": "marble", "hp": 3, "points": 30, "drop_chance": 0.15},
+    "M": {"type": "mud", "hp": 1, "points": 10, "drop_chance": 0.05},
+    "H": {"type": "granite", "hp": 5, "points": 50, "drop_chance": 0.25},
+    "R": {"type": "obsidian", "hp": 10, "points": 100, "drop_chance": 0.4},
+    ".": {"type": "empty", "hp": 0, "points": 0, "drop_chance": 0.0}
+  },
+  "drops_allowed": ["bronze_coin", "heart", "shield", "fireball", "wide_paddle"],
+  "win_condition": "destroy_all",
+  "music": "scientific_ambient",
+  "facts": [
+    "The ancient Egyptians mapped the stars as early as 3000 BCE.",
+    "The star Sirius (Sopdet) signaled the annual Nile flood.",
+    "Egyptian astronomers divided the sky into 36 decans (10-day periods)."
+  ],
+  "difficulty_multiplier": 1.0
+}

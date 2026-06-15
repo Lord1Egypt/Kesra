@@ -1,0 +1,43 @@
+# Godot
+.godot/
+*.import
+*.translation
+export.cfg
+export_presets.cfg
+.import_metadata
+import/
+
+# Godot project specific
+project/binary/
+project/build/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+*.app
+*.exe
+*.dll
+
+# Build artifacts
+build/
+export/
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+.env
+
+# GitHub specific
+gh_*
+
+# Logs
+*.log
