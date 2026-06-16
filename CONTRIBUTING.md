@@ -28,15 +28,16 @@ Open a [feature request](https://github.com/Lord1Egypt/Kesra/issues/new?template
 ### Getting Started
 1. Fork the repo
 2. Clone your fork: `git clone https://github.com/YOUR_USER/Kesra.git`
-3. Open with **Godot 4.3+**
-4. Create a branch: `git checkout -b feature/your-idea`
+3. Install dependencies: `pip install pygame-ce`
+4. Run the game: `python main.py`
+5. Create a branch: `git checkout -b feature/your-idea`
 
 ### Code Style
-- **GDScript** with snake_case
+- **Python** with snake_case
 - One class per file
 - Comment in **English** (code) + **Arabic** (intent)
-- Use `@onready` for node references
-- Signals at the top, then vars, then methods
+- Keep modules focused: graphics in `gfx.py`, game entities in `entities.py`, etc.
+- No external dependencies beyond `pygame-ce` — stdlib only everywhere else
 
 ### Commit Messages
 ```
