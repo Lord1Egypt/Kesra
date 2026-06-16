@@ -34,6 +34,12 @@ var attached: bool = false
 func _ready() -> void:
 	gravity_scale = 0
 	continuous_cd = RigidBody2D.CCD_MODE_CAST_SHAPE
+	can_sleep = false
+	if physics_material_override == null:
+		var mat := PhysicsMaterial.new()
+		mat.bounce = 1.0
+		mat.friction = 0.0
+		physics_material_override = mat
 	if sprite.texture == null:
 		sprite.texture = ProceduralTexture.make_circle(int(DIAMETER), Color.WHITE)
 	body_entered.connect(_on_body_entered)
@@ -50,7 +56,14 @@ func launch(direction: Vector2 = Vector2.UP) -> void:
 	trail.enabled = true
 
 func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
-	if linear_velocity.length() > 0:
+	if attached:
+		return
+	# Defensive: a perfectly square-on corner hit can still zero out velocity
+	# even with bounce=1 (floating point cancellation). Without this the ball
+	# freezes in place forever instead of just losing some speed.
+	if linear_velocity.length() < 1.0:
+		linear_velocity = Vector2.UP.rotated(randf_range(-0.3, 0.3)) * current_speed
+	else:
 		linear_velocity = linear_velocity.normalized() * current_speed
 
 func _on_body_entered(body: Node) -> void:

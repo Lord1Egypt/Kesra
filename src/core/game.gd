@@ -27,9 +27,31 @@ func _ready() -> void:
 	gman = get_node("/root/GameManager")
 	gman.round_started.connect(_on_round_started)
 	gman.game_over.connect(_on_game_over)
+	spawn_walls()
 	spawn_paddle()
 	gman.start_run()
 	spawn_ball()
+
+func spawn_walls() -> void:
+	var vp_size: Vector2 = get_viewport_rect().size
+	var thickness: float = 32.0
+	_make_wall(Vector2(-thickness / 2.0, vp_size.y / 2.0), Vector2(thickness, vp_size.y + thickness * 2))
+	_make_wall(Vector2(vp_size.x + thickness / 2.0, vp_size.y / 2.0), Vector2(thickness, vp_size.y + thickness * 2))
+	_make_wall(Vector2(vp_size.x / 2.0, -thickness / 2.0), Vector2(vp_size.x + thickness * 2, thickness))
+
+func _make_wall(pos: Vector2, size: Vector2) -> void:
+	var wall := StaticBody2D.new()
+	wall.position = pos
+	var shape := RectangleShape2D.new()
+	shape.size = size
+	var col := CollisionShape2D.new()
+	col.shape = shape
+	wall.add_child(col)
+	var mat := PhysicsMaterial.new()
+	mat.bounce = 1.0
+	mat.friction = 0.0
+	wall.physics_material_override = mat
+	add_child(wall)
 
 func spawn_paddle() -> void:
 	paddle = PaddleScene.instantiate()
