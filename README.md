@@ -29,7 +29,7 @@
 
 Built with **Godot 4.x**, Kesra combines classic **Arkanoid/Breakout** gameplay with an **educational RPG-like progression system** that spans **9 knowledge domains**:
 
-| # | World | Theme | Levels | Boss |
+| # | World (Biome) | Theme | Rounds/Cycle | Recurring Boss |
 |---|-------|-------|--------|------|
 | 🧪 | **Scientific** | Astronomy, Math, Medicine | 8 | Imhotep |
 | 🎨 | **Artistic** | Hieroglyphics, Sculpture, Music | 6 | Thoth |
@@ -41,18 +41,23 @@ Built with **Godot 4.x**, Kesra combines classic **Arkanoid/Breakout** gameplay 
 | 📦 | **Logistical** | Quarrying, Transport, Trade | 8 | Khufu |
 | 🚀 | **Space & Rockets** | Satellite, Mars, NARSS | 8 | NARSS Director |
 
+Biomes **cycle forever** — after World 9 it loops back to World 1, harder than before. There is
+no final world and no ending.
+
 ### 🏆 Super Boss: **The Great Sphinx** 🪦
-1000-brick boss that tests your knowledge of ALL Egyptian civilization!
+1000-brick boss that returns every few cycles to test your knowledge of ALL Egyptian civilization!
 
 ---
 
 ## 🎮 Features
 
 ### 🕹️ Gameplay
+- **♾️ Infinite by design** — no level cap, no ending. The 9 worlds are biomes that cycle
+  forever, getting harder and rewarding rarer drops every cycle.
 - **Classic brick-breaking** with **50+ power-ups & drops**
 - **Combo system** — chain hits for massive score multipliers
-- **5 game modes**: Story, Endless, Challenge, Tournament, Puzzle
-- **12 unique boss fights** with special mechanics
+- **Endless core + Challenge, Tournament, Puzzle modifiers** layered on top
+- **9 recurring boss fights** that come back stronger every cycle instead of being beaten once
 - **Rocket system**: 5 types from Scarab to Ra's Spear
 
 ### 📚 Educational
@@ -78,12 +83,10 @@ Built with **Godot 4.x**, Kesra combines classic **Arkanoid/Breakout** gameplay 
 
 | Platform | Status |
 |----------|--------|
-| 🖥️ **Windows** | ✅ Supported |
-| 🐧 **Linux** | ✅ Supported |
-| 🍎 **macOS** | ✅ Supported |
-| 🤖 **Android** | ✅ Supported |
-| 🍏 **iOS** | 🔄 Planned |
-| 🌐 **Web (HTML5)** | ✅ Playable in browser |
+| 🌐 **Web (HTML5)** | 🟡 In progress — primary target right now |
+| 🖥️ **Windows / Linux / macOS** | 🔴 Planned (export config exists, untested) |
+| 🤖 **Android** | 🔄 Planned next after web |
+| 🍏 **iOS** | 🔄 Planned after Android |
 
 ---
 
@@ -154,18 +157,17 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
 ## 🗺️ Roadmap
 
+The game has **no "launch and done" milestone** — it's built as an infinite, continuously
+updated core loop. See [ROADMAP.md](ROADMAP.md) for the live phase checklist:
+
 | Phase | Milestone | Status |
 |-------|-----------|--------|
-| 🏗️ v0.1 | Foundation (paddle, ball, bricks) | 🔴 Not started |
-| 💎 v0.2 | Power-ups & Drops | 🔴 Not started |
-| 🧪 v0.3 | Worlds 1-3 (Science, Art, History) | 🔴 Not started |
-| 🌍 v0.4 | Worlds 4-6 (Geo, Arch, Religion) | 🔴 Not started |
-| 🇪🇬 v0.5 | Worlds 7-9 (National, Logistics, Space) | 🔴 Not started |
-| 🏆 v0.6 | Progression (Shop, Achievements) | 🔴 Not started |
-| 🎨 v0.7 | Polish (Music, UI, Animations) | 🔴 Not started |
-| 🚀 v1.0 | Launch! | 🔴 Not started |
-
-See [ROADMAP.md](ROADMAP.md) for the full plan.
+| 🏗️ v0.1-infinite-core | Infinite core loop (paddle, ball, procedural rounds, bricks, drops) | 🟡 In progress |
+| 🌐 v0.2-web | Playable in a browser tab | 🔴 Not started |
+| 🎨 v0.3-feel | Full power-up/rocket/particle pass | 🔴 Not started |
+| 🏆 v0.4-meta | Shop, achievements, cloud save | 🔴 Not started |
+| 📱 v0.5-mobile | Android + iOS builds | 🔴 Not started |
+| ♾️ Seasons | Ongoing content drops, forever | 🔴 Not started |
 
 ---
 

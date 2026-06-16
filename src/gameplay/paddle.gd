@@ -7,6 +7,7 @@ signal paddle_resized(width_factor: float)
 signal powerup_activated(powerup_type: String)
 
 const BASE_WIDTH: float = 128.0
+const HEIGHT: float = 24.0
 const SPEED: float = 600.0
 const MARGIN: float = 16.0
 
@@ -22,19 +23,22 @@ var fire_effect: bool = false
 @onready var screen_size: Vector2 = get_viewport_rect().size
 
 func _ready() -> void:
+	add_to_group("paddle")
+	if sprite.texture == null:
+		sprite.texture = ProceduralTexture.make_rect(int(BASE_WIDTH), int(HEIGHT), Color.WHITE)
+	sprite.modulate = paddle_color
 	update_paddle_size()
-	
-func _physics_process(delta: float) -> void:
-	var direction = Input.get_axis("ui_left", "ui_right")
+
+func _physics_process(_delta: float) -> void:
+	var direction := Input.get_axis("ui_left", "ui_right")
 	velocity.x = direction * SPEED
 	move_and_slide()
-	
-	# Clamp to screen
-	var half_width = (BASE_WIDTH * width_factor) / 2
+
+	var half_width: float = (BASE_WIDTH * width_factor) / 2.0
 	global_position.x = clamp(global_position.x, MARGIN + half_width, screen_size.x - MARGIN - half_width)
 
 func update_paddle_size() -> void:
-	var new_width = BASE_WIDTH * width_factor
+	var new_width: float = BASE_WIDTH * width_factor
 	collision_shape.shape.size.x = new_width
 	sprite.scale.x = width_factor
 	paddle_resized.emit(width_factor)
@@ -61,15 +65,14 @@ func activate_fire(duration: float = 15.0) -> void:
 	sprite.modulate = Color("#FF4500")
 	await get_tree().create_timer(duration).timeout
 	fire_effect = false
-	sprite.modulate = Color.WHITE
+	sprite.modulate = paddle_color
 
 func activate_magnet(duration: float = 8.0) -> void:
-	# Magnet effect — pulls coins toward player
 	glow_enabled = true
 	sprite.modulate = Color.MAGENTA
 	await get_tree().create_timer(duration).timeout
 	glow_enabled = false
-	sprite.modulate = Color.WHITE
+	sprite.modulate = paddle_color
 
 func get_launch_position() -> Vector2:
 	return global_position + Vector2(0, -32)

@@ -4,238 +4,96 @@
 
 ---
 
-## 🎯 Vision
+## 🎯 Vision (updated 2026-06-16)
 
-**كِسرة** aims to be the most content-rich brick-breaker game ever made — an interactive encyclopedia of Egyptian civilization wrapped in addictive gameplay. **9 worlds, 100+ levels, 50+ power-ups, 12 bosses, 5 game modes, and infinite replayability.**
+**كِسرة** is an **infinite** Egyptian-themed brick-breaker. There is **no level cap and no ending** —
+the 9 knowledge worlds (Science, Art, History, Geography, Architecture, Religion, National,
+Logistics, Space) are **biomes that cycle forever**, getting harder and richer every loop. The
+"100+ levels / v1.0 launch" framing from the original design is retired: the game is a **live
+product** that keeps receiving new bricks, drops, bosses, and effects in small updates
+indefinitely, the same way a live-service arcade game would.
 
----
-
-## 📅 Phases
-
-### Phase 1: 🏗️ Foundation (v0.1) — ETA: Week 1-2
-
-**Goal:** Core gameplay loop working
-
-- [ ] Godot project setup with mobile-friendly config
-- [ ] **Paddle** — movement, screen clamping, base physics
-- [ ] **Ball** — launch, bounce physics, constant speed, trail effect
-- [ ] **Bricks** — grid placement, hit detection, destruction
-- [ ] **Collision** — all collision scenarios (ball↔brick, ball↔paddle, ball↔wall)
-- [ ] **Level loading** from JSON files
-- [ ] **Basic HUD** — score, lives, level number
-- [ ] **1 playable level** (World 1-1: Astronomy)
-- [ ] **.gitignore**, **LICENSE**, **README**
-- [ ] **CI/CD pipeline** — Godot export for Linux/Windows/Web
-- [ ] **Milestone:** `v0.1-alpha`
+Core invariants:
+- **No win screen.** The run only ends when the player loses all lives.
+- **Biome cycling, not biome completion.** Round `N` → biome `((N-1) % 9) + 1` → cycle `floor((N-1)/9)+1`.
+- **Recurring, scaling bosses.** Every 8th round in a cycle is a boss round; boss stats scale with
+  the cycle number so the same 9 bosses stay relevant forever instead of being "beaten once."
+- **Everything is data-driven** so new content (bricks, drops, biomes, bosses) can be added without
+  touching engine code — this is what makes "update every while" sustainable.
 
 ---
 
-### Phase 2: 💎 Drops & Power-ups (v0.2) — ETA: Week 3-4
+## 🧭 How to resume this project in a new session
 
-**Goal:** All items, power-ups, and rockets work
-
-- [ ] **Drop system** — Common/Rare/Epic/Legendary drops from bricks
-- [ ] **Drop collection** — magnet, auto-collect
-- [ ] **Common drops**: Bronze Coin, Heart, Shield, Speed+
-- [ ] **Rare drops**: Fireball, Wide Paddle, Multi-ball, Slow, Magnet
-- [ ] **Epic drops**: Rocket, Laser, Star, Bomb, Chaos
-- [ ] **Legendary drops**: Diamond, Ankh, Whirlwind, Eye of Horus, Aten
-- [ ] **Rocket system**: Scarab → Khopesh → Neith Arrow → Sobek Trident → Ra's Spear
-- [ ] **Power-up duration timers**
-- [ ] **Stacking logic** for multiple active power-ups
-- [ ] **5 levels** with increasing difficulty
-- [ ] **Milestone:** `v0.2-alpha`
+1. Read this file (`ROADMAP.md`) top to bottom — `## Checkpoints` below is the live status.
+2. Read `GAME_DESIGN.md` for the full content bible (drops, bricks, bosses, economy, audio, visuals).
+3. Read the repo-root `CLAUDE.md` for the current engineering state (what's implemented vs stubbed,
+   how to run/export, known gaps).
+4. Pick up the next unchecked item in `## Checkpoints`.
 
 ---
 
-### Phase 3: 🌎 Worlds 1-3 (v0.3) — ETA: Month 2
+## ✅ Checkpoints (live status — update as you go)
 
-**Goal:** Science, Art, and History worlds complete
+### Phase 0 — Infinite Core Foundation
+- [x] Repo made private
+- [x] Redesign docs for infinite-first structure (this file + GAME_DESIGN + CLAUDE.md)
+- [x] `project.godot` fixed: GameManager autoload registered, broken texture/icon preloads removed
+- [x] `game_manager.gd` converted from finite world/level to infinite round/cycle/biome model
+- [x] `level_generator.gd` — procedural infinite round generator (scaling HP/density/drops, recurring scaled bosses)
+- [x] `brick.gd` + `brick.tscn` — primitive-rendered (no art assets yet), hp/points/drop-roll
+- [x] `drop.gd` + `drop.tscn` — falling pickup, magnet support, rarity color coding
+- [x] `paddle.tscn`, `ball.tscn` — wired to existing scripts, primitive shapes instead of missing sprites
+- [x] `game.gd` + `game.tscn` — wires everything, spawns rounds back-to-back forever
+- [x] `hud.gd` + `hud.tscn` — score / lives / round / biome / combo
+- [x] `main_menu.gd` + `main_menu.tscn` — entry point
+- [x] Juice pass 1: brick-break particle burst, combo screen shake, score popups
+- [x] Playable in a real browser engine — verified 2026-06-16 via Playwright + headless Chromium loading the exported build: main menu renders (Start button works) and clicking Start loads the gameplay scene with a real generated brick grid + HUD, zero console errors. Still want a human to actually play it for feel — automated check only proves it *runs*, not that it's *fun*.
 
-#### 🧪 World 1: Scientific (8 levels)
-- [ ] Level 1-1: Astronomy — Stars & Constellations
-- [ ] Level 1-2: Mathematics — Numbers & Geometry
-- [ ] Level 1-3: Medicine — Ancient Egyptian Medicine
-- [ ] Level 1-4: Engineering — Building the Pyramids
-- [ ] Level 1-5: Chemistry — Mummification
-- [ ] Level 1-6: Botany — Papyrus & Farming
-- [ ] Level 1-7: Zoology — Sacred Animals
-- [ ] Level 1-8: **Boss: Imhotep** 🏆
+### Phase 1 — Web Playable Loop
+- [x] Export templates installed + headless Web (HTML5/WASM) export validated in CI sandbox
+- [x] Fixed export hosting blocker: `export_presets.cfg` had `variant/thread_support=true`, which requires Cross-Origin-Isolation/SharedArrayBuffer headers most static hosts don't send — caught via the Playwright check above. Switched to `thread_support=false` (single-threaded WASM) for broad host compatibility; re-verified clean.
+- [ ] Fix CI workflow (`ci-cd.yml`) missing export-template install step
+- [ ] Deploy web build somewhere reachable without GitHub Pages (private repo ⇒ Pages needs paid plan) — candidate: Vercel static hosting or itch.io
+- [ ] Touch input for paddle (mobile browsers) alongside keyboard
 
-#### 🎨 World 2: Artistic (6 levels)
-- [ ] Level 2-1: Hieroglyphics — Writing System
-- [ ] Level 2-2: Sculpture — Sphinx & Statues
-- [ ] Level 2-3: Painting — Tomb Paintings
-- [ ] Level 2-4: Jewelry — Gold & Gemstones
-- [ ] Level 2-5: Music — Ancient Instruments
-- [ ] Level 2-6: **Boss: Thoth** 🎨
+### Phase 2 — Feel & Content Depth
+- [ ] All power-up/drop effects from `GAME_DESIGN.md` actually wired to gameplay (currently only a subset)
+- [ ] Rocket system (Scarab → Ra's Spear)
+- [ ] Combo-based dynamic music intensity
+- [ ] Per-biome particle theme (sand/fire/gold/stardust) instead of generic burst
+- [ ] Boss telegraphing + multi-phase weak points
 
-#### 📜 World 3: Historical (8 levels)
-- [ ] Level 3-1: Predynastic — Before the Pharaohs
-- [ ] Level 3-2: Old Kingdom — Pyramids Era
-- [ ] Level 3-3: Middle Kingdom — Renaissance
-- [ ] Level 3-4: New Kingdom — Empire
-- [ ] Level 3-5: Foreign Rule — Persians, Greeks, Romans
-- [ ] Level 3-6: Islamic Era — Conquest & Civilization
-- [ ] Level 3-7: Modern Egypt — Revolutions & Republic
-- [ ] Level 3-8: **Boss: Ramesses II** 👑
+### Phase 3 — Meta-progression
+- [ ] Shop (paddle/ball/rocket tiers) wired to persistent currency
+- [ ] Achievements (including secret ones)
+- [ ] Daily/weekly challenge modifiers layered on the infinite core (not a separate finite mode)
+- [ ] Cloud save (so progress isn't tied to one browser)
 
-- [ ] **Boss fight engine** — multi-phase bosses, weak points
-- [ ] **Milestone:** `v0.3-alpha`
+### Phase 4 — Mobile
+- [ ] Android export validated (APK installs + runs)
+- [ ] iOS export validated (needs macOS/Xcode toolchain — likely cloud CI, not this sandbox)
+- [ ] Store listing assets
 
----
-
-### Phase 4: 🌍 Worlds 4-6 (v0.4) — ETA: Month 3
-
-#### 🌍 World 4: Geographical (6 levels)
-- [ ] Level 4-1: The Nile — River of Life
-- [ ] Level 4-2: Deserts — Eastern & Western
-- [ ] Level 4-3: Oases — Siwa, Kharga, Dakhla
-- [ ] Level 4-4: Red Sea — Coral Reefs
-- [ ] Level 4-5: Cities — Governorates & Landmarks
-- [ ] Level 4-6: **Boss: Hapi** 🌊
-
-#### 🏛️ World 5: Architectural (8 levels)
-- [ ] Level 5-1: Pyramids — The Great Three
-- [ ] Level 5-2: Temples — Karnak, Luxor, Abu Simbel
-- [ ] Level 5-3: Obelisks — Standing Stones
-- [ ] Level 5-4: Tombs — Valley of the Kings
-- [ ] Level 5-5: Fortresses — Saladin, Qaitbay
-- [ ] Level 5-6: Mosques — Ibn Tulun, Muhammad Ali
-- [ ] Level 5-7: Churches — Hanging Church
-- [ ] Level 5-8: **Boss: Seshat** 🏛️
-
-#### ☀️ World 6: Religious (8 levels)
-- [ ] Level 6-1: Creation Myth — Nun & Atum
-- [ ] Level 6-2: The Ennead — Nine Great Gods
-- [ ] Level 6-3: Afterlife — Book of the Dead
-- [ ] Level 6-4: Pharaoh as God — Divine Kingship
-- [ ] Level 6-5: Monotheism — Akhenaten's Aten
-- [ ] Level 6-6: Abrahamic Religions — Egypt in the Bible & Quran
-- [ ] Level 6-7: Mysticism — Sufism
-- [ ] Level 6-8: **Boss: Ra** ☀️
-
-- [ ] **Milestone:** `v0.4-alpha`
+### Ongoing — "Seasons" (post-Phase 1, runs forever)
+This replaces the old "v1.0 Launch then done" milestone. Once the infinite core is solid and
+playable in a browser, work proceeds as small recurring content drops:
+- New brick types / drop types
+- New recurring boss variants
+- Cosmetic skins for paddle/ball
+- Leaderboard refresh, seasonal modifiers (Ramadan, holidays, etc.)
 
 ---
 
-### Phase 5: 🇪🇬 Worlds 7-9 (v0.5) — ETA: Month 4
+## 🏅 Version Tags (informational, not "finish lines")
 
-#### 🇪🇬 World 7: National (8 levels)
-- [ ] Level 7-1: Flag & Anthem
-- [ ] Level 7-2: Revolution
-- [ ] Level 7-3: Army
-- [ ] Level 7-4: Suez Canal
-- [ ] Level 7-5: Aswan Dam
-- [ ] Level 7-6: Sports
-- [ ] Level 7-7: Folk Culture
-- [ ] Level 7-8: **Boss: Unity** 🇪🇬
-
-#### 📦 World 8: Logistical (8 levels)
-- [ ] Level 8-1: Quarrying
-- [ ] Level 8-2: Transport on the Nile
-- [ ] Level 8-3: Workforce Organization
-- [ ] Level 8-4: Supply Chain
-- [ ] Level 8-5: Ramp Systems
-- [ ] Level 8-6: Irrigation
-- [ ] Level 8-7: Trade Routes
-- [ ] Level 8-8: **Boss: The Great Pyramid** 🏗️
-
-#### 🚀 World 9: Space & Rockets (8 levels)
-- [ ] Level 9-1: Early Flight — Abbas ibn Firnas
-- [ ] Level 9-2: Rocket Science Basics
-- [ ] Level 9-3: NARSS — Egyptian Space Agency
-- [ ] Level 9-4: EgyptSat — Satellites
-- [ ] Level 9-5: TIBA — Communications
-- [ ] Level 9-6: Space Race
-- [ ] Level 9-7: Mars Mission
-- [ ] Level 9-8: **Boss: Falcon Heavy** 🚀
-
-- [ ] **Milestone:** `v0.5-alpha`
+- `v0.1-infinite-core` — Phase 0 complete, runs in Godot editor
+- `v0.2-web` — Phase 1 complete, playable in a browser tab via shared link
+- `v0.3-feel` — Phase 2 complete
+- `v0.4-meta` — Phase 3 complete
+- `v0.5-mobile` — Phase 4 complete
+- Everything after is a Season, not a version number that implies "done"
 
 ---
 
-### Phase 6: 🏆 Progression (v0.6) — ETA: Month 5
-
-- [ ] **Shop system** — Paddle, Ball, Rocket upgrades
-- [ ] **Currency system** — Bronze, Silver, Gold, Gems
-- [ ] **Achievement system** — 50+ achievements
-- [ ] **Save/Load** — persistent profile
-- [ ] **Endless Mode** — procedurally generated levels
-- [ ] **Challenge Mode** — daily/weekly challenges
-- [ ] **Puzzle Mode** — strategic brick-breaking
-- [ ] **Milestone:** `v0.6-beta`
-
----
-
-### Phase 7: 🎨 Polish (v0.7) — ETA: Month 6
-
-- [ ] **Music** — 9 world-specific soundtracks
-- [ ] **SFX** — All sound effects
-- [ ] **Animations** — Brick destruction, drops, boss attacks
-- [ ] **Particle systems** — Sand, fire, gold, stardust
-- [ ] **UI overhaul** — Egyptian-themed menus
-- [ ] **Fonts** — Custom hieroglyphic-inspired font
-- [ ] **Tutorial** — Interactive first-time experience
-- [ ] **Difficulty balancing** — Full playtest
-- [ ] **Milestone:** `v0.7-rc`
-
----
-
-### Phase 8: 🚀 Launch (v1.0) — ETA: Month 7
-
-- [ ] **Android build** — APK + Play Store ready
-- [ ] **iOS build** — App Store ready
-- [ ] **Desktop builds** — Windows, Linux, macOS
-- [ ] **Web build** — itch.io / GitHub Pages
-- [ ] **Leaderboards** — Global high scores
-- [ ] **Cloud save** — Sync across devices
-- [ ] **Marketing** — Trailer, screenshots, store pages
-- [ ] **v1.0 Release!** 🎉
-
----
-
-### Post-Launch (v1.1+)
-
-- [ ] **World 10: Underworld** — Duat (afterlife world)
-- [ ] **World 11: Future Egypt** — Cyberpunk 3000
-- [ ] **World 12: Mini Mode** — 100×100 brick grid
-- [ ] **Level Editor** — Players create their own levels
-- [ ] **Community Workshop** — Share levels online
-- [ ] **Multiplayer** — 2-player co-op / versus
-- [ ] **Seasonal events** — Ramadan, Christmas, etc.
-- [ ] **More languages** — French, German, Spanish
-
----
-
-## 📊 Progress Tracker
-
-```
-Phase 1 🏗️  [          ] 0%
-Phase 2 💎  [          ] 0%
-Phase 3 🌍  [          ] 0%
-Phase 4 🏛️  [          ] 0%
-Phase 5 🚀  [          ] 0%
-Phase 6 🏆  [          ] 0%
-Phase 7 🎨  [          ] 0%
-Phase 8 🚀  [          ] 0%
-```
-
-**Total: 0%** 🏁
-
----
-
-## 🏅 Milestone Labels
-
-- `v0.1` — Foundation (Weeks 1-2)
-- `v0.2` — Power-ups (Weeks 3-4)
-- `v0.3` — Worlds 1-3 (Month 2)
-- `v0.4` — Worlds 4-6 (Month 3)
-- `v0.5` — Worlds 7-9 (Month 4)
-- `v0.6` — Progression (Month 5)
-- `v0.7` — Polish (Month 6)
-- `v1.0` — Launch (Month 7)
-
----
-
-*Last updated: 2026-06-15*
+*Last updated: 2026-06-16 — rewritten for infinite-mode-first design.*

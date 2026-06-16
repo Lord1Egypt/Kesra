@@ -7,7 +7,12 @@
 
 ## 🎯 Vision
 
-لعبة **Arkanoid/Breakout** لكن بشكل **مصري خالص** — كل بلوك ليه شخصيته، كل مرحلة علم وفن وتاريخ، وكل ما تكسر حاجة تتعلم حاجة. لعبة **لا تنتهي أبداً** — كل ما تفتحها تلاقي حاجة جديدة.
+لعبة **Arkanoid/Breakout** لكن بشكل **مصري خالص** — كل بلوك ليه شخصيته، كل عالم علم وفن وتاريخ، وكل ما تكسر حاجة تتعلم حاجة. لعبة **لا تنتهي أبداً** — كل ما تفتحها تلاقي حاجة جديدة.
+
+> **تحديث 2026-06-16: مفيش Level Cap.** الـ 9 Worlds دول **Biomes بتلف على نفسها للأبد** —
+> كل ما تخلص دورة (Cycle) كاملة على الـ 9 عوالم، تبدأ دورة جديدة أصعب، والـ Bosses بترجع تاني
+> بقوة أعلى. فالتفاصيل اللي جاية (عوالم/مراحل/Bosses) هي **محتوى يتلف للأبد جوه Endless Mode**،
+> مش مسار قصة ينتهي. التفاصيل الكاملة للـ Engine في `ROADMAP.md` تحت "Infinite Core Foundation".
 
 ---
 
@@ -228,30 +233,28 @@
 
 ## 🎮 GAME MODES — أنماط اللعب
 
-### 1. 📖 Story Mode (قصة)
-- 9 Worlds × 8-15 Levels = **~100 Level**
-- كل Level ليه قصة صغيرة تتعلم منها حاجة
-- **Boss Fights** كل 8 مستويات
-- تكشف أسرار مصر القديمة كل ما تتقدم
+### 1. ♾️ Endless Mode — **THE core mode, مفيش غيرها دلوقتي**
+- **مفيش Level Cap نهائي.** الـ Rounds متولدة Procedurally للأبد.
+- كل Round بتلف على الـ 9 Worlds بالترتيب (Round → Biome = `((Round-1) % 9) + 1`)،
+  وكل ما تخلص دورة كاملة (Cycle) تزيد الصعوبة وتفتح drops أندر.
+- كل Round الـ 8 جوه كل Cycle = **Boss Round**، والـ Boss نفسه بيرجع تاني كل Cycle لكن **أقوى**
+  (HP وقدراته تتضاعف مع رقم الـ Cycle) — مفيش "تخلص الـ Boss وخلاص"، هو بيرجع دايمًا أصعب.
+- القصة والمعلومات التعليمية (اللي كانت اسمها "Story Mode" قبل كذا) بقت **flavor جوه Endless** —
+  كل Biome بيعرض حقائقه (`facts`) بين الـ Rounds، من غير ما يكون فيه "نهاية" تتفتح وتقفل.
+- **Leaderboard** عالمي + تحديات يومية وأسبوعية تتبني فوق نفس الـ Engine.
 
-### 2. ♾️ Endless Mode (ما ينتهيش)
-- Levels متولدة عشوائياً (Procedural Generation)
-- كل ما توصل لLevel أعلى — تزيد الصعوبة
-- **Leaderboard** عالمي
-- تحديات يومية وأسبوعية
-
-### 3. 🎯 Challenge Mode
+### 2. 🎯 Challenge Mode
 - Challenges محددة: "اكسر 500 بلوك في دقيقة"
 - "اجمع 10 Rockets في مستوى واحد"
 - "خلص مستوى من غير ما تخسر حياة"
 - كل Challenge يعطيك مكافأة خاصة
 
-### 4. 🏆 Tournament Mode
+### 3. 🏆 Tournament Mode
 - بطولات أسبوعية
 - كل اللاعبين نفس الـ Level
 - أعلى نقاط يفوز بجوائز
 
-### 5. 🧩 Puzzle Mode
+### 4. 🧩 Puzzle Mode
 - Levels مصممة بالعقل — مش مجرد تكسير
 - محتاج تفكير استراتيجي — ترتيب معين للبلوكات
 - "استخدم 3 صواريخ بس عشان تكسر 50 بلوك"
@@ -526,49 +529,9 @@ save_data/
 
 ## 📅 DEVELOPMENT ROADMAP
 
-### Phase 1: 🏗️ Foundation (Week 1-2)
-- [ ] Godot project setup
-- [ ] Core mechanics: Paddle, Ball, Bricks
-- [ ] Collision detection
-- [ ] Level loading from JSON
-- [ ] 1 Playable Level (World 1-1)
-
-### Phase 2: 💎 Drops & Power-ups (Week 3-4)
-- [ ] Drop system (Common → Legendary)
-- [ ] Power-up implementations
-- [ ] Rocket system
-- [ ] Shop & currency system
-- [ ] 5 Levels
-
-### Phase 3: 🌍 Worlds (Month 2)
-- [ ] World 1 (Science) — 8 Levels
-- [ ] World 2 (Art) — 6 Levels
-- [ ] World 3 (History) — 8 Levels
-- [ ] Boss Fight engine
-- [ ] 3 Boss fights
-
-### Phase 4: 🎯 Progression (Month 3)
-- [ ] All 9 Worlds
-- [ ] All Bosses
-- [ ] Achievements
-- [ ] Endless Mode
-- [ ] Challenge Mode
-- [ ] Save/Load
-
-### Phase 5: 🎨 Polish (Month 4)
-- [ ] Music & SFX
-- [ ] Animations & Particles
-- [ ] UI/UX overhaul
-- [ ] Egyptian fonts
-- [ ] Tutorial
-- [ ] Difficulty balancing
-
-### Phase 6: 🚀 Launch (Month 5)
-- [ ] Android/iOS build
-- [ ] Desktop (Windows/Linux/Mac)
-- [ ] Leaderboards
-- [ ] Cloud save
-- [ ] Launch 🎉
+See **`ROADMAP.md`** at the repo root — that file is the single source of truth for engineering
+phases and live checkpoints (this doc is the content bible, not the schedule, to avoid the two
+drifting out of sync).
 
 ---
 

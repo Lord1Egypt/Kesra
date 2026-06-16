@@ -5,9 +5,12 @@ importer=""
 [application]
 
 config/name="كِسرة"
-config/description="Egyptian Brick-Breaker — 9 Worlds, 100+ Levels"
+config/description="Egyptian Brick-Breaker — Infinite Endless Mode, 9 Cycling Worlds"
 run/main_scene="res://src/ui/main_menu.tscn"
-config/icon="res://assets/ui/icon.png"
+
+[autoload]
+
+GameManager="*res://src/core/game_manager.gd"
 
 [rendering]
 
@@ -21,10 +24,3 @@ window/size/viewport_height=720
 window/size/mode=0
 window/stretch/mode="viewport"
 window/stretch/aspect="expand"
-
-[input]
-
-ui_left=[keyboard:A]
-ui_right=[keyboard:D]
-ui_accept=[keyboard:Space,keyboard:Enter]
-pause=[keyboard:Escape]
