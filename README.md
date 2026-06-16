@@ -151,6 +151,3 @@ Built with ❤️ by **Mohamed (Lord1Egypt)** 🇪🇬
 
 ---
 
-<p align="center">
-  <i>"العلم نور، والجهل ظلام — والتكسير أحلى ما في الدنيا"</i>
-</p>
