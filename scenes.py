@@ -186,7 +186,8 @@ class GameOverScene:
             surf.blit(new, new.get_rect(center=(cx, cy + 60)))
 
         pulse = 0.5 + 0.5 * math.sin(self.t * 3)
-        rcol  = tuple(int(80 + 80 * pulse),) * 3
+        v     = int(80 + 80 * pulse)
+        rcol  = (v, v, v)
         restart = self.f_sm.render("SPACE / click to play again  |  ESC for menu", True, rcol)
         surf.blit(restart, restart.get_rect(center=(cx, cy + 110)))
 
