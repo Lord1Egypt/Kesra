@@ -56,6 +56,7 @@ Core invariants:
 - [ ] Fix CI workflow (`ci-cd.yml`) missing export-template install step
 - [ ] Deploy web build somewhere reachable without GitHub Pages (private repo ⇒ Pages needs paid plan) — candidate: Vercel static hosting or itch.io
 - [ ] Touch input for paddle (mobile browsers) alongside keyboard
+- [x] Windows Desktop export preset added + validated (2026-06-16): self-contained `Kesra.exe` (PE32+ GUI, ~84MB, embedded `.pck`) exports cleanly headlessly via `--export-debug "Windows Desktop"`. Published as a downloadable GitHub Release asset alongside the Web build.
 
 ### Phase 2 — Feel & Content Depth
 - [ ] All power-up/drop effects from `GAME_DESIGN.md` actually wired to gameplay (currently only a subset)
