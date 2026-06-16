@@ -4,7 +4,7 @@
 
 ---
 
-## 🎯 Vision (updated 2026-06-16)
+## 🎯 Vision (updated 2026-06-17)
 
 **كِسرة** is an **infinite** Egyptian-themed brick-breaker. There is **no level cap and no ending** —
 the 9 knowledge worlds (Science, Art, History, Geography, Architecture, Religion, National,
@@ -35,50 +35,49 @@ Core invariants:
 
 ## ✅ Checkpoints (live status — update as you go)
 
-### Phase 0 — Infinite Core Foundation
-- [x] Repo made private
-- [x] Redesign docs for infinite-first structure (this file + GAME_DESIGN + CLAUDE.md)
-- [x] `project.godot` fixed: GameManager autoload registered, broken texture/icon preloads removed
-- [x] `game_manager.gd` converted from finite world/level to infinite round/cycle/biome model
-- [x] `level_generator.gd` — procedural infinite round generator (scaling HP/density/drops, recurring scaled bosses)
-- [x] `brick.gd` + `brick.tscn` — primitive-rendered (no art assets yet), hp/points/drop-roll
-- [x] `drop.gd` + `drop.tscn` — falling pickup, magnet support, rarity color coding
-- [x] `paddle.tscn`, `ball.tscn` — wired to existing scripts, primitive shapes instead of missing sprites
-- [x] `game.gd` + `game.tscn` — wires everything, spawns rounds back-to-back forever
-- [x] `hud.gd` + `hud.tscn` — score / lives / round / biome / combo
-- [x] `main_menu.gd` + `main_menu.tscn` — entry point
-- [x] Juice pass 1: brick-break particle burst, combo screen shake, score popups
-- [x] Playable in a real browser engine — verified 2026-06-16 via Playwright + headless Chromium loading the exported build: main menu renders (Start button works) and clicking Start loads the gameplay scene with a real generated brick grid + HUD, zero console errors. Still want a human to actually play it for feel — automated check only proves it *runs*, not that it's *fun*.
+### Phase 0 — Infinite Core Foundation (Python + Pygame)
+- [x] Repo made public
+- [x] Engine switched from Godot 4.3 → **Python + Pygame-CE** for beautiful programmatic visuals
+- [x] `settings.py` — all constants: screen, speeds, biome palette, brick tiers, drop types
+- [x] `state.py` — GameState: score/lives/combo/coins/powerups, add_score(), lose_life()
+- [x] `levelgen.py` — procedural infinite round generator (scaling HP/density/drops, recurring scaled bosses)
+- [x] `entities.py` — Ball (rainbow HSV trail, wall bounces, brick overlap), Paddle, Brick, Drop
+- [x] `gfx.py` — drawing primitives: pre-baked glow surfaces, gradient backgrounds, 3D bricks, hearts
+- [x] `particles.py` — ParticleSystem (burst/sparks), FloatTextSystem, RingSystem, AmbientSystem
+- [x] `scenes.py` — MenuScene (animated pyramids, Arabic title, pulsing PLAY), PlayScene, GameOverScene
+- [x] `main.py` — async entry point (Pygbag-compatible: `await asyncio.sleep(0)`)
+- [x] Cairo.ttf bundled — correct Arabic rendering of كِسرة verified
+- [x] All 3 scenes pass 180-frame headless simulation without crash
+- [x] `v0.1-infinite-core` GitHub Release published (Godot prototype + Windows exe)
 
-### Phase 1 — Web Playable Loop
-- [x] Export templates installed + headless Web (HTML5/WASM) export validated in CI sandbox
-- [x] Fixed export hosting blocker: `export_presets.cfg` had `variant/thread_support=true`, which requires Cross-Origin-Isolation/SharedArrayBuffer headers most static hosts don't send — caught via the Playwright check above. Switched to `thread_support=false` (single-threaded WASM) for broad host compatibility; re-verified clean.
-- [ ] Fix CI workflow (`ci-cd.yml`) missing export-template install step
-- [ ] Deploy web build somewhere reachable without GitHub Pages (private repo ⇒ Pages needs paid plan) — candidate: Vercel static hosting or itch.io
+### Phase 1 — Web Deploy
+- [x] `pygbag.ini` config added (480×720 canvas, metadata)
+- [x] `.github/workflows/web-deploy.yml` — Pygbag WASM build + GitHub Pages deploy on every push
+- [x] GitHub Pages enabled at `https://lord1egypt.github.io/Kesra/`
+- [ ] Verify live URL loads and game runs in browser after CI succeeds
 - [ ] Touch input for paddle (mobile browsers) alongside keyboard
-- [x] Windows Desktop export preset added + validated (2026-06-16): self-contained `Kesra.exe` (PE32+ GUI, ~84MB, embedded `.pck`) exports cleanly headlessly via `--export-debug "Windows Desktop"`. Published as a downloadable GitHub Release asset alongside the Web build.
 
-### Phase 2 — Feel & Content Depth
-- [ ] All power-up/drop effects from `GAME_DESIGN.md` actually wired to gameplay (currently only a subset)
-- [ ] Rocket system (Scarab → Ra's Spear)
-- [ ] Combo-based dynamic music intensity
-- [ ] Per-biome particle theme (sand/fire/gold/stardust) instead of generic burst
+### Phase 2 — Art & Feel
+- [ ] Gemini Imagen 4 backgrounds for all 9 biomes (unlock: enable API billing at ai.dev)
+  - Use: `python3 ~/.claude/tools/gemini_image.py --kesra-biomes --out-dir assets/bg/`
+- [ ] All power-up/drop effects from `GAME_DESIGN.md` wired to gameplay
+- [ ] Per-biome particle theme (sand/fire/gold/stardust)
 - [ ] Boss telegraphing + multi-phase weak points
+- [ ] Sound effects + per-biome music
 
 ### Phase 3 — Meta-progression
-- [ ] Shop (paddle/ball/rocket tiers) wired to persistent currency
-- [ ] Achievements (including secret ones)
-- [ ] Daily/weekly challenge modifiers layered on the infinite core (not a separate finite mode)
-- [ ] Cloud save (so progress isn't tied to one browser)
+- [ ] Shop (paddle/ball skins) wired to persistent coins
+- [ ] Achievements
+- [ ] Daily/weekly challenge modifiers
+- [ ] Save to localStorage (web) / file (desktop)
 
 ### Phase 4 — Mobile
-- [ ] Android export validated (APK installs + runs)
-- [ ] iOS export validated (needs macOS/Xcode toolchain — likely cloud CI, not this sandbox)
+- [ ] Android APK via Pygbag or Buildozer
+- [ ] iOS (needs macOS toolchain)
 - [ ] Store listing assets
 
 ### Ongoing — "Seasons" (post-Phase 1, runs forever)
-This replaces the old "v1.0 Launch then done" milestone. Once the infinite core is solid and
-playable in a browser, work proceeds as small recurring content drops:
+Once the infinite core is solid and playable in a browser, work proceeds as small recurring content:
 - New brick types / drop types
 - New recurring boss variants
 - Cosmetic skins for paddle/ball
@@ -88,13 +87,13 @@ playable in a browser, work proceeds as small recurring content drops:
 
 ## 🏅 Version Tags (informational, not "finish lines")
 
-- `v0.1-infinite-core` — Phase 0 complete, runs in Godot editor
-- `v0.2-web` — Phase 1 complete, playable in a browser tab via shared link
-- `v0.3-feel` — Phase 2 complete
-- `v0.4-meta` — Phase 3 complete
+- `v0.1-infinite-core` — Godot prototype shipped 2026-06-16
+- `v0.2-python` — Python + Pygame rewrite, beautiful visuals, CI web deploy
+- `v0.3-feel` — Phase 2 complete: art + full power-ups + sound
+- `v0.4-meta` — Phase 3 complete: shop + save
 - `v0.5-mobile` — Phase 4 complete
 - Everything after is a Season, not a version number that implies "done"
 
 ---
 
-*Last updated: 2026-06-16 — rewritten for infinite-mode-first design.*
+*Last updated: 2026-06-17 — Python/Pygame rewrite complete, web deploy CI live.*

@@ -455,50 +455,31 @@ Level ↑ → تفتح أسلحة جديدة + قدرات
 
 ## 🛠️ TECHNICAL ARCHITECTURE
 
-### Engine: Godot 4.x (GDScript)
+### Engine: Python + Pygame-CE
+
+Run locally: `pip install pygame-ce && python main.py`
+Web export: `pip install pygbag && python -m pygbag --build main.py`
+Live web: `https://lord1egypt.github.io/Kesra/`
 
 ```
-kesra/
+Kesra/
+├── main.py              # مدخل اللعبة — async entry (Pygbag-compatible)
+├── settings.py          # الثوابت — screen, speeds, biomes, brick tiers, drops
+├── state.py             # إدارة الحالة — score/lives/combo/coins/powerups
+├── levelgen.py          # توليد المستويات — procedural infinite round generator
+├── entities.py          # الكيانات — Ball, Paddle, Brick, Drop
+├── gfx.py               # الرسم — glow, gradients, 3D bricks, hearts, shimmer
+├── particles.py         # الجزيئات — ParticleSystem, RingSystem, AmbientSystem
+├── scenes.py            # المشاهد — MenuScene, PlayScene, GameOverScene
 ├── assets/
-│   ├── audio/          # Music + SFX
-│   ├── fonts/          # خطوط مصرية
-│   ├── textures/       # البلوكات، الخلفيات
-│   └── ui/            # أزرار، أيقونات، Scrolls
-├── src/
-│   ├── core/
-│   │   ├── main.gd          # مدخل اللعبة
-│   │   ├── game_manager.gd  # إدارة الحالة
-│   │   ├── level_manager.gd # تحميل المستويات
-│   │   └── save_manager.gd  # حفظ التقدم
-│   ├── gameplay/
-│   │   ├── paddle.gd        # المضرب
-│   │   ├── ball.gd          # الكرة
-│   │   ├── brick.gd         # البلوك
-│   │   ├── drops.gd         # الهدايا
-│   │   └── projectiles.gd   # الصواريخ
-│   ├── systems/
-│   │   ├── combo_system.gd  # نظام الكومبو
-│   │   ├── shop.gd          # المحل
-│   │   ├── achievements.gd  # الإنجازات
-│   │   └── difficulty.gd    # نظام الصعوبة
-│   ├── worlds/
-│   │   ├── world_1_science/
-│   │   ├── world_2_art/
-│   │   ├── ... (9 worlds)
-│   │   └── world_9_space/
-│   ├── bosses/
-│   │   ├── boss_base.gd     # Base Class للـ Bosses
-│   │   ├── imhotep.gd
-│   │   ├── ramesses.gd
-│   │   └── sphinx.gd        # Super Boss
-│   └── ui/
-│       ├── main_menu.gd
-│       ├── hud.gd
-│       ├── shop_ui.gd
-│       └── achievement_ui.gd
-├── levels/             # Level Data (JSON/TSON)
-├── tools/              # Level Editor helper scripts
-└── project.godot
+│   ├── fonts/Cairo.ttf  # خط عربي — Arabic font bundled for كِسرة rendering
+│   └── ui/              # SVG logo, UI graphics
+├── pygbag.ini           # Web build config (480×720 canvas)
+├── .github/workflows/
+│   └── web-deploy.yml   # CI: Pygbag build → GitHub Pages on every push to main
+├── ROADMAP.md           # Live phase checklist
+├── GAME_DESIGN.md       # Content bible (worlds, bosses, power-ups, economy)
+└── CLAUDE.md            # Engineering memory for AI assistants
 ```
 
 ### Data-Driven Levels
