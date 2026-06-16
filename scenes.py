@@ -10,6 +10,7 @@ from entities import Ball, Paddle, Brick, Drop
 from levelgen import generate_round
 from particles import ParticleSystem, FloatTextSystem, RingSystem, AmbientSystem
 import gfx
+from rtl import ar
 
 
 # ── shared starfield ──────────────────────────────────────────────────────────
@@ -97,7 +98,7 @@ class MenuScene:
 
         # Arabic title with glow
         gfx.draw_glow(surf, (W // 2, H // 2 - 100), 90, C_GOLD, alpha=120)
-        title = self.f_ar.render("كِسرة", True, C_GOLD)
+        title = self.f_ar.render(ar("كِسرة"), True, C_GOLD)
         surf.blit(title, title.get_rect(center=(W // 2, H // 2 - 100)))
 
         # Sub-title
@@ -105,7 +106,7 @@ class MenuScene:
         surf.blit(sub, sub.get_rect(center=(W // 2, H // 2 - 38)))
 
         # Tagline
-        tag = self.f_sm.render('"محصلتش قبل كده ولا هتحصل"', True, (160, 140, 100))
+        tag = self.f_sm.render(ar('"محصلتش قبل كده ولا هتحصل"'), True, (160, 140, 100))
         surf.blit(tag, tag.get_rect(center=(W // 2, H // 2)))
 
         # Best score
@@ -266,13 +267,28 @@ class PlayScene:
 
         for ev in events:
             if ev.type == pygame.KEYDOWN:
+                self.paddle.on_keydown(ev.key)
                 if ev.key == pygame.K_ESCAPE:
                     return "menu"
                 if ev.key == pygame.K_SPACE and self.ball and self.ball.attached:
                     self.ball.launch(random.uniform(-80, -100))
+            elif ev.type == pygame.KEYUP:
+                self.paddle.on_keyup(ev.key)
+            elif ev.type == pygame.FINGERMOTION:
+                # touch drag on web/mobile — move paddle to finger x
+                tx = int(ev.x * W)
+                self.paddle.x = max(0.0, min(W - self.paddle.w, tx - self.paddle.w / 2))
+            elif ev.type == pygame.FINGERDOWN:
+                if self.ball and self.ball.attached:
+                    self.ball.launch(random.uniform(-80, -100))
 
         keys = pygame.key.get_pressed()
         self.paddle.update(dt, keys, W)
+
+        # mouse / touch control — move paddle to pointer x
+        mx, my = pygame.mouse.get_pos()
+        if pygame.mouse.get_pressed()[0]:
+            self.paddle.x = max(0.0, min(W - self.paddle.w, mx - self.paddle.w / 2))
 
         # keep attached ball on paddle
         if self.ball and self.ball.attached:
