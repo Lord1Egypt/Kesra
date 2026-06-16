@@ -74,6 +74,20 @@ checks only prove "it parses and exports," not "it's fun" or "the physics feel r
   scripts have zero file dependencies until real art exists.
 - `paddle.gd` never called `add_to_group("paddle")`, but `ball.gd`'s paddle-bounce logic checked
   `body.is_in_group("paddle")` — the ball would never have bounced correctly off the paddle. Fixed.
+- **"Ball stops and disappears" (reported by owner 2026-06-16, fixed same day)** — two real bugs:
+  (1) `game.tscn`/`game.gd` had **zero boundary colliders** on the left/right/top edges of the play
+  area, so the ball could fly off-camera and never come back (the "disappears" — it didn't actually
+  vanish, it just left the visible/playable area forever with nothing to bounce it back). Fixed by
+  adding `spawn_walls()` in `game.gd`, which builds 3 `StaticBody2D` boundaries at runtime (no new
+  scene files needed). (2) The ball had no `physics_material_override`, so Godot's default
+  `bounce=0.0` made every collision fully inelastic — a square corner hit could zero out
+  `linear_velocity` permanently (the "stops"), and the existing speed-renormalization in
+  `_integrate_forces` only re-applied `current_speed` when `linear_velocity.length() > 0`, so a
+  true zero vector stayed zero forever. Fixed by giving the ball `bounce=1.0, friction=0.0` and
+  `can_sleep = false`, plus a defensive fallback in `_integrate_forces`: if speed ever drops below
+  1.0 px/s, relaunch it on a slightly randomized upward vector instead of leaving it dead. Verified
+  via Playwright screenshots taken a few seconds apart showing the ball's trail actually moving and
+  staying on-screen, through a full life-loss → game-over → main-menu cycle.
 
 ## Known gaps / honest limitations
 - `.github/workflows/ci-cd.yml` downloads the Godot editor but **never installs export templates**
