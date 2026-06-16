@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Lord1Egypt/Kesra/releases"><img src="https://img.shields.io/github/v/release/Lord1Egypt/Kesra?color=FFD700&label=Release&style=flat-square" alt="Release"/></a>
+  <a href="https://github.com/Lord1Egypt/Kesra/releases"><img src="https://img.shields.io/badge/Release-v0.1%20∞-FFD700?style=flat-square" alt="Release"/></a>
   <img src="https://img.shields.io/badge/Engine-Python%20%2B%20Pygame-3776ab?style=flat-square&logo=python&logoColor=white" alt="Python"/>
   <img src="https://img.shields.io/badge/Platform-Web%20%7C%20Windows%20%7C%20Linux-blue?style=flat-square" alt="Platform"/>
   <img src="https://img.shields.io/badge/مصر-أم_الدنيا-red?style=flat-square" alt="Egypt"/>
@@ -75,7 +75,7 @@ There is no final world and no ending.
 
 | Platform | Status |
 |----------|--------|
-| 🌐 **Web (Browser)** | 🟡 In progress — via Pygbag (Python→WASM) |
+| 🌐 **Web (Browser)** | ✅ Auto-deployed via Pygbag → [lord1egypt.github.io/Kesra](https://lord1egypt.github.io/Kesra/) |
 | 🖥️ **Windows** | ✅ Runs from source — `pip install pygame-ce && python main.py` |
 | 🐧 **Linux / macOS** | ✅ Runs from source |
 | 🤖 **Android / iOS** | 🔄 Planned |
@@ -135,7 +135,7 @@ See [ROADMAP.md](ROADMAP.md) for the full live checklist. Summary:
 |-------|-----------|--------|
 | 🏗️ v0.1 | Infinite core (Godot prototype) | ✅ Released |
 | 🐍 v0.2 | Python + Pygame rewrite — beautiful graphics | 🟡 In progress |
-| 🌐 v0.3 | Pygbag web export — play in browser | 🔴 Planned |
+| 🌐 v0.3 | Pygbag web export — play in browser | 🟡 CI building |
 | 🎨 v0.4 | Full power-up / boss / particle pass | 🔴 Planned |
 | 🏆 v0.5 | Shop, achievements, save system | 🔴 Planned |
 | 📱 v0.6 | Android + iOS | 🔴 Planned |
