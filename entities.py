@@ -129,6 +129,9 @@ class Ball:
 
 # ── Paddle ────────────────────────────────────────────────────────────────────
 class Paddle:
+    _LEFT_KEYS  = (pygame.K_LEFT, pygame.K_a)
+    _RIGHT_KEYS = (pygame.K_RIGHT, pygame.K_d)
+
     def __init__(self, cx: float, y: float):
         self.w   = float(PADDLE_W)
         self.h   = float(PADDLE_H)
@@ -139,8 +142,15 @@ class Paddle:
         # power-up state
         self.magnet     = False
         self.magnet_t   = 0.0
-        self._shimmer   = 0.0          # 0-1 shimmer position
-        self._shimmer_v = 0.0          # velocity of shimmer
+        self._shimmer   = 0.0
+        # event-based key tracking (reliable in Pygbag/browser)
+        self._held: set = set()
+
+    def on_keydown(self, key: int) -> None:
+        self._held.add(key)
+
+    def on_keyup(self, key: int) -> None:
+        self._held.discard(key)
 
     @property
     def rect(self) -> pygame.Rect:
@@ -152,9 +162,13 @@ class Paddle:
 
     def update(self, dt: float, keys, screen_w: int) -> None:
         speed = PADDLE_SPEED
-        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+        left  = any(k in self._held for k in self._LEFT_KEYS) or \
+                any(keys[k] for k in self._LEFT_KEYS)
+        right = any(k in self._held for k in self._RIGHT_KEYS) or \
+                any(keys[k] for k in self._RIGHT_KEYS)
+        if left:
             self.x -= speed * dt
-        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+        if right:
             self.x += speed * dt
         self.x = max(0.0, min(screen_w - self.w, self.x))
 

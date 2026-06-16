@@ -24,8 +24,8 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install Pygbag
-        run: pip install pygbag
+      - name: Install dependencies
+        run: pip install pygbag -r requirements.txt
 
       - name: Build web export
         run: python -m pygbag --build --app_name kesra main.py
