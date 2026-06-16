@@ -1,11 +1,9 @@
 <p align="center">
-  <img src="assets/ui/kesra_logo.png" alt="كِسرة Logo" width="300"/>
+  <img src="assets/ui/kesra_logo.svg" alt="كِسرة Logo" width="500"/>
 </p>
 
-<h1 align="center">🏛️ كِسرة — Egyptian Brick-Breaker 🚀</h1>
-
 <p align="center">
-  <b>9 Worlds • 100+ Levels • 50+ Power-ups • 12 Bosses • ∞ Replayability</b>
+  <b>9 Cycling Worlds • Infinite Rounds • 50+ Power-ups • Recurring Bosses • ∞ No Ending</b>
 </p>
 
 <p align="center">
@@ -14,68 +12,62 @@
 
 <p align="center">
   <a href="https://github.com/Lord1Egypt/Kesra/releases"><img src="https://img.shields.io/github/v/release/Lord1Egypt/Kesra?color=FFD700&label=Release&style=flat-square" alt="Release"/></a>
-  <a href="https://github.com/Lord1Egypt/Kesra/actions"><img src="https://img.shields.io/github/actions/workflow/status/Lord1Egypt/Kesra/ci-cd.yml?style=flat-square&logo=github" alt="CI/CD"/></a>
-  <a href="https://github.com/Lord1Egypt/Kesra/issues"><img src="https://img.shields.io/github/issues/Lord1Egypt/Kesra?style=flat-square&color=red" alt="Issues"/></a>
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/Lord1Egypt/Kesra?style=flat-square" alt="License"/></a>
-  <img src="https://img.shields.io/badge/Engine-Godot%204.x-%23478cbf?style=flat-square&logo=godotengine" alt="Godot"/>
-  <img src="https://img.shields.io/badge/Platform-Android%20%7C%20iOS%20%7C%20Desktop%20%7C%20Web-blue?style=flat-square" alt="Platform"/>
+  <img src="https://img.shields.io/badge/Engine-Python%20%2B%20Pygame-3776ab?style=flat-square&logo=python&logoColor=white" alt="Python"/>
+  <img src="https://img.shields.io/badge/Platform-Web%20%7C%20Windows%20%7C%20Linux-blue?style=flat-square" alt="Platform"/>
+  <img src="https://img.shields.io/badge/مصر-أم_الدنيا-red?style=flat-square" alt="Egypt"/>
 </p>
 
 ---
 
 ## 🌟 Overview
 
-**كِسرة (Kesra)** is not just a brick-breaker game — it's an **interactive journey through Egyptian civilization**, from the pyramids to space exploration.
+**كِسرة (Kesra)** is an infinite Egyptian brick-breaker — a journey through 9 knowledge worlds
+of Egyptian civilization that loops forever, getting harder and richer every cycle.
 
-Built with **Godot 4.x**, Kesra combines classic **Arkanoid/Breakout** gameplay with an **educational RPG-like progression system** that spans **9 knowledge domains**:
+Built with **Python + Pygame**, combining classic **Arkanoid/Breakout** gameplay with:
+- Procedural infinite rounds — no level cap, no ending
+- Beautiful particle effects and glowing visuals
+- Egyptian-themed worlds cycling from Science to Space
 
-| # | World (Biome) | Theme | Rounds/Cycle | Recurring Boss |
-|---|-------|-------|--------|------|
-| 🧪 | **Scientific** | Astronomy, Math, Medicine | 8 | Imhotep |
-| 🎨 | **Artistic** | Hieroglyphics, Sculpture, Music | 6 | Thoth |
-| 📜 | **Historical** | Kingdoms, Conquests, Revolutions | 8 | Ramesses II |
-| 🌍 | **Geographical** | Nile, Deserts, Red Sea | 6 | Hapi |
-| 🏛️ | **Architectural** | Pyramids, Temples, Mosques | 8 | Seshat |
-| ☀️ | **Religious** | Mythology, Monotheism, Mysticism | 8 | Ra |
-| 🇪🇬 | **National** | Flag, Army, Suez Canal | 8 | Nebty |
-| 📦 | **Logistical** | Quarrying, Transport, Trade | 8 | Khufu |
-| 🚀 | **Space & Rockets** | Satellite, Mars, NARSS | 8 | NARSS Director |
+| # | World | Theme | Recurring Boss |
+|---|-------|-------|----------------|
+| 🧪 | **Scientific** | Astronomy, Math, Medicine | Imhotep |
+| 🎨 | **Artistic** | Hieroglyphics, Sculpture, Music | Thoth |
+| 📜 | **Historical** | Kingdoms, Conquests, Revolutions | Ramesses II |
+| 🌍 | **Geographical** | Nile, Deserts, Red Sea | Hapi |
+| 🏛️ | **Architectural** | Pyramids, Temples, Mosques | Seshat |
+| ☀️ | **Religious** | Mythology, Monotheism, Mysticism | Ra |
+| 🇪🇬 | **National** | Flag, Army, Suez Canal | Nebty |
+| 📦 | **Logistical** | Quarrying, Transport, Trade | Khufu |
+| 🚀 | **Space & Rockets** | Satellite, Mars, NARSS | NARSS Director |
 
-Biomes **cycle forever** — after World 9 it loops back to World 1, harder than before. There is
-no final world and no ending.
-
-### 🏆 Super Boss: **The Great Sphinx** 🪦
-1000-brick boss that returns every few cycles to test your knowledge of ALL Egyptian civilization!
+Biomes **cycle forever** — after World 9 it loops back to World 1, harder and with rarer drops.
+There is no final world and no ending.
 
 ---
 
 ## 🎮 Features
 
 ### 🕹️ Gameplay
-- **♾️ Infinite by design** — no level cap, no ending. The 9 worlds are biomes that cycle
-  forever, getting harder and rewarding rarer drops every cycle.
-- **Classic brick-breaking** with **50+ power-ups & drops**
-- **Combo system** — chain hits for massive score multipliers
-- **Endless core + Challenge, Tournament, Puzzle modifiers** layered on top
-- **9 recurring boss fights** that come back stronger every cycle instead of being beaten once
-- **Rocket system**: 5 types from Scarab to Ra's Spear
+- **♾️ Infinite by design** — no level cap, no ending
+- **Classic brick-breaking** with physics that feel crisp and satisfying
+- **Combo system** — chain hits for massive score multipliers and special effects
+- **9 recurring boss rounds** — bosses come back stronger every cycle
+- **50+ power-up drops**: wide paddle, fireball, magnet, shield, multi-ball and more
+- **6 brick tiers**: mud → stone → marble → granite → gold → obsidian
 
-### 📚 Educational
-- Every level teaches **real history, science, art & culture**
-- **Hieroglyphic translations**, **architectural facts**, **astronomical data**
-- Built-in **encyclopedia** of Egyptian civilization
+### 🎨 Visual Effects
+- **Glowing ball** with color trail and pulse animation
+- **Particle explosions** on every brick break, colored by brick type
+- **3D-styled bricks** with highlight, shadow, and crack animation on hit
+- **Animated starfield background** with biome-colored atmosphere
+- **Screen shake** on combo hits
+- **Score popups** that rise and fade
 
 ### 🎯 Progression
-- **Shop system** with 7 paddle tiers, 6 ball types, 5 rocket types
-- **50+ achievements** (including secret ones 🥚)
-- **4 currencies**: Bronze, Silver, Gold, Gems
-- **Save/load** across devices
-
-### 🎨 Visual & Audio
-- **Egyptian-themed art**: Papyrus scrolls, scarab beetles, ankh crosses
-- **Dynamic music** that changes per world (orchestral → synthwave)
-- **Particle effects**: sand, fire, gold, stardust
-- **9 color palettes** matching each world's theme
+- Score and combo system
+- Difficulty scales every round — more bricks, tougher types, rarer drops
+- Boss rounds every 8th round of a cycle
 
 ---
 
@@ -83,91 +75,71 @@ no final world and no ending.
 
 | Platform | Status |
 |----------|--------|
-| 🌐 **Web (HTML5)** | 🟡 In progress — primary target right now |
-| 🖥️ **Windows / Linux / macOS** | 🔴 Planned (export config exists, untested) |
-| 🤖 **Android** | 🔄 Planned next after web |
-| 🍏 **iOS** | 🔄 Planned after Android |
+| 🌐 **Web (Browser)** | 🟡 In progress — via Pygbag (Python→WASM) |
+| 🖥️ **Windows** | ✅ Runs from source — `pip install pygame-ce && python main.py` |
+| 🐧 **Linux / macOS** | ✅ Runs from source |
+| 🤖 **Android / iOS** | 🔄 Planned |
 
 ---
 
 ## 🚀 Quick Start
 
-### Play Now
-1. Go to **[Releases](https://github.com/Lord1Egypt/Kesra/releases)**
-2. Download your platform's build
-3. Extract and run!
-
-### Build from Source
+### Run Locally
 
 ```bash
-# Clone
 git clone https://github.com/Lord1Egypt/Kesra.git
 cd Kesra
 
-# Open with Godot 4.x
-# File → Import → Select project.godot
-# Run ▶️
+pip install pygame-ce
+python main.py
 ```
 
-### Requirements
-- **[Godot 4.3+](https://godotengine.org/download/)** (for development)
-- **Android**: JDK 17, Android SDK (for mobile builds)
+### Controls
+
+| Action | Key |
+|--------|-----|
+| Move paddle | ← → Arrow keys or A / D |
+| Launch ball | Space |
+| Pause | Escape |
+
+### Download a Release
+Go to **[Releases](https://github.com/Lord1Egypt/Kesra/releases)** and grab the latest build.
 
 ---
 
 ## 🏗️ Architecture
 
 ```
-kesra/
-├── assets/              # Game assets
-│   ├── audio/           # Music & SFX
-│   ├── fonts/           # Egyptian-themed fonts
-│   ├── textures/        # Bricks, backgrounds, items
-│   └── ui/              # UI elements
-├── src/                 # Source code
-│   ├── core/            # Core game systems
-│   ├── gameplay/        # Paddle, ball, bricks, drops
-│   ├── systems/         # Combo, shop, achievements
-│   ├── worlds/          # World-specific content
-│   ├── bosses/          # Boss fight scripts
-│   └── ui/              # Menus, HUD, shop UI
-├── levels/              # Level data (JSON)
-├── .github/             # CI/CD, templates
-├── project.godot        # Godot project file
-└── README.md            # You are here!
+Kesra/
+├── main.py              # Entry point (async — Pygbag web-compatible)
+├── settings.py          # Constants (screen, speeds, colours, biomes)
+├── gfx.py               # Drawing primitives (glow, gradients, 3D bricks)
+├── particles.py         # Particle system
+├── levelgen.py          # Procedural infinite level generator
+├── entities.py          # Ball, Paddle, Brick, Drop
+├── scenes.py            # Menu, Play, GameOver scene classes
+├── state.py             # GameState singleton (score, lives, round, combo)
+├── assets/ui/           # Logo and UI graphics
+├── ROADMAP.md           # Live phase checklist ← check here for status
+├── GAME_DESIGN.md       # World/boss/power-up design spec
+└── CLAUDE.md            # Engineering memory for AI assistants
 ```
-
----
-
-## 🤝 Contributing
-
-**Kesra is open-source!** We welcome all contributions:
-
-- 🐛 **Report bugs** — [Open an issue](https://github.com/Lord1Egypt/Kesra/issues/new?template=bug_report.md)
-- ✨ **Suggest features** — [Feature request](https://github.com/Lord1Egypt/Kesra/issues/new?template=feature_request.md)
-- 🌍 **Propose worlds** — [World request](https://github.com/Lord1Egypt/Kesra/issues/new?template=world_request.md)
-- 💎 **Design power-ups** — [Power-up idea](https://github.com/Lord1Egypt/Kesra/issues/new?template=powerup_request.md)
-- 🎨 **Create assets** — Art, music, UI
-- 💻 **Write code** — GDScript, Godot
-- 📝 **Translate** — Arabic, English, and more!
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
 ---
 
 ## 🗺️ Roadmap
 
-The game has **no "launch and done" milestone** — it's built as an infinite, continuously
-updated core loop. See [ROADMAP.md](ROADMAP.md) for the live phase checklist:
+See [ROADMAP.md](ROADMAP.md) for the full live checklist. Summary:
 
 | Phase | Milestone | Status |
 |-------|-----------|--------|
-| 🏗️ v0.1-infinite-core | Infinite core loop (paddle, ball, procedural rounds, bricks, drops) | 🟡 In progress |
-| 🌐 v0.2-web | Playable in a browser tab | 🔴 Not started |
-| 🎨 v0.3-feel | Full power-up/rocket/particle pass | 🔴 Not started |
-| 🏆 v0.4-meta | Shop, achievements, cloud save | 🔴 Not started |
-| 📱 v0.5-mobile | Android + iOS builds | 🔴 Not started |
-| ♾️ Seasons | Ongoing content drops, forever | 🔴 Not started |
+| 🏗️ v0.1 | Infinite core (Godot prototype) | ✅ Released |
+| 🐍 v0.2 | Python + Pygame rewrite — beautiful graphics | 🟡 In progress |
+| 🌐 v0.3 | Pygbag web export — play in browser | 🔴 Planned |
+| 🎨 v0.4 | Full power-up / boss / particle pass | 🔴 Planned |
+| 🏆 v0.5 | Shop, achievements, save system | 🔴 Planned |
+| 📱 v0.6 | Android + iOS | 🔴 Planned |
+| ♾️ Seasons | Ongoing content forever | 🔴 Ongoing |
 
 ---
 
@@ -180,7 +152,5 @@ Built with ❤️ by **Mohamed (Lord1Egypt)** 🇪🇬
 ---
 
 <p align="center">
-  <img src="https://img.shields.io/badge/مصر-أم_الدنيا-red?style=for-the-badge" />
-  <br>
   <i>"العلم نور، والجهل ظلام — والتكسير أحلى ما في الدنيا"</i>
 </p>
