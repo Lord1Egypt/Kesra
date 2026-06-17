@@ -480,7 +480,7 @@ class PlayScene:
                     self.rings.add(brick.rect.centerx, brick.rect.centery,
                                    brick.color, max_r=30, life=0.25, width=2)
 
-    def _on_brick_killed(self, brick: Brick, pts: int) -> None:
+    def _on_brick_killed(self, brick: Brick, pts: int, _depth: int = 0) -> None:
         cx, cy = brick.rect.centerx, brick.rect.centery
         # big particle burst
         self.particles.burst(cx, cy, brick.color, n=22, speed=220, r=5, life=0.65)
@@ -489,8 +489,18 @@ class PlayScene:
         # expanding shockwave rings (two rings for depth)
         self.rings.add(cx, cy, brick.color, max_r=55, life=0.45, width=3)
         self.rings.add(cx, cy, (255, 255, 255), max_r=30, life=0.25, width=1)
-        # score popup with glow
-        self.floats.add(f"+{pts:,}", cx, brick.rect.top - 4, brick.color, self.f_pop)
+        # score popup — bigger font for high-value bricks
+        pop_font = self.f_med if pts >= 500 else self.f_pop
+        self.floats.add(f"+{pts:,}", cx, brick.rect.top - 4, brick.color, pop_font)
+
+        # special-brick effects (guard recursion depth for explosive chains)
+        if brick.special == "explosive" and _depth < 3:
+            self._explode_brick(brick, _depth)
+        elif brick.special == "cursed":
+            self.paddle.resize(0.72)
+            self._flash, self._flash_c = 0.18, (180, 40, 220)
+            self.floats.add("☠ CURSED", cx, cy - 16, (200, 80, 240), self.f_sm, 1.2)
+
         c = self.gs.combo
         if c and c % 8 == 0:
             self._shake = 0.30
@@ -500,12 +510,32 @@ class PlayScene:
             self.floats.add(f"✦ x{c} COMBO! ✦", W // 2, H // 3,
                             C_GOLD, self.f_med, life=1.4)
             self.rings.add(W // 2, H // 2, C_GOLD, max_r=200, life=0.6, width=4)
-        # maybe drop
+
+        # drop: gift bricks always drop something good, others roll drop_chance
         import random as _r
-        if _r.random() < brick.drop_ch:
-            allowed = self._round_data.get("drops", ["bronze_coin"])
+        allowed = self._round_data.get("drops", ["bronze_coin"])
+        if brick.special == "gift":
+            good = [d for d in allowed if d in
+                    ("silver_coin", "gold_coin", "diamond", "multi_ball", "star",
+                     "heart", "fireball", "wide")]
+            t = _r.choice(good) if good else "silver_coin"
+            self.drops.append(Drop(cx, cy, t, self.f_tiny))
+        elif _r.random() < brick.drop_ch:
             t = allowed[_r.randint(0, len(allowed) - 1)]
-            self.drops.append(Drop(brick.rect.centerx, brick.rect.centery, t, self.f_tiny))
+            self.drops.append(Drop(cx, cy, t, self.f_tiny))
+
+    def _explode_brick(self, brick: Brick, depth: int) -> None:
+        """Explosive brick: 1 damage to all 8 neighbours."""
+        self._shake = max(self._shake, 0.25)
+        self.rings.add(brick.rect.centerx, brick.rect.centery,
+                       (255, 140, 40), max_r=80, life=0.4, width=4)
+        for nb in self.bricks:
+            if nb is brick or not nb.alive:
+                continue
+            if abs(nb.col - brick.col) <= 1 and abs(nb.row - brick.row) <= 1:
+                pts = self.gs.add_score(nb.pts)
+                if nb.hit(1):
+                    self._on_brick_killed(nb, pts, depth + 1)
 
     def _on_all_balls_lost(self) -> None:
         self.gs.reset_combo()
@@ -604,6 +634,17 @@ class PlayScene:
     def _next_round(self) -> None:
         self.gs.next_round()
         self._start_round()
+        self._victory_fountain()
+
+    def _victory_fountain(self) -> None:
+        """Gold particle fountain celebrating a cleared round (after the reset)."""
+        for _ in range(7):
+            x = random.randint(40, W - 40)
+            self.particles.burst(x, H - 30, C_GOLD, n=10, speed=320, r=4,
+                                 life=1.0, gravity=420)
+        self.rings.add(W // 2, H // 2, C_GOLD, max_r=180, life=0.7, width=4)
+        self.floats.add("✦ ROUND CLEAR ✦", W // 2, H // 2 - 40,
+                        C_GOLD, self.f_med, 1.6)
 
     # ── auto-play AI ──────────────────────────────────────────────────────────
     def _run_ai(self, dt: float) -> None:

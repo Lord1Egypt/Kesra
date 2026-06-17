@@ -110,6 +110,25 @@ def draw_brick(surf: pygame.Surface, rect: pygame.Rect, color: tuple,
         draw_glow(surf, rect.center, max(rect.w, rect.h) // 2, glow_col, alpha=60)
 
 
+def draw_special_mark(surf: pygame.Surface, rect: pygame.Rect,
+                      kind: str, col: tuple) -> None:
+    """Small geometric badge identifying a special brick (no font needed)."""
+    cx, cy = rect.center
+    if kind == "explosive":          # 4-point starburst
+        for ang in (0, 45, 90, 135):
+            a  = math.radians(ang)
+            dx = int(math.cos(a) * 6)
+            dy = int(math.sin(a) * 6)
+            pygame.draw.line(surf, col, (cx - dx, cy - dy), (cx + dx, cy + dy), 2)
+    elif kind == "gift":             # filled diamond
+        pts = [(cx, cy - 5), (cx + 5, cy), (cx, cy + 5), (cx - 5, cy)]
+        pygame.draw.polygon(surf, col, pts)
+        pygame.draw.polygon(surf, (255, 255, 255), pts, 1)
+    elif kind == "cursed":           # hollow ring with a slash
+        pygame.draw.circle(surf, col, (cx, cy), 5, 2)
+        pygame.draw.line(surf, col, (cx - 4, cy - 4), (cx + 4, cy + 4), 2)
+
+
 def draw_paddle(surf: pygame.Surface, rect: pygame.Rect,
                 color: tuple, shimmer_t: float = 0.0) -> None:
     # body gradient

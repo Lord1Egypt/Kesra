@@ -14,6 +14,9 @@
 - Pause menu (ESC/P → Resume / Restart / Menu)
 - Ball aim-guide dotted line before launch
 - Brick HP indicators on tough bricks  ·  Combo meter bar toward next ×8 milestone
+- Special bricks: explosive (chain), cursed (paddle shrink), gift (guaranteed good drop)
+- Victory fountain + "ROUND CLEAR" celebration  ·  bigger score popups for 500+ point bricks
+- Persistent save (best score/round + settings) via localStorage / file
 
 ---
 
@@ -55,14 +58,14 @@
 ## 🧱 BRICK TYPES & MECHANICS
 
 31. **Armored Brick** — has a shield layer; must be hit twice before HP starts reducing
-32. **Explosive Brick** — when destroyed, deals 1 damage to all 8 adjacent bricks
+32. ✅ **Explosive Brick** — when destroyed, deals 1 damage to all 8 adjacent bricks *(shipped, chain-capped)*
 33. **Healing Brick** — slowly regenerates 1 HP every 5s (must kill quickly)
 34. **Moving Brick** — slides left/right across its row, hard to hit
 35. **Falling Brick** — drops down one row every 8s; eventually hits paddle zone
 36. **Teleport Brick** — when hit, teleports ball to a random position
 37. **Mirror Brick** — reflects ball at exact incoming angle (no normal bounce)
 38. **Multiplier Brick** — worth 1000 pts but only 1 HP; golden shine effect
-39. **Curse Brick** — when destroyed, shrinks paddle for 5s as penalty
+39. ✅ **Curse Brick** — when destroyed, shrinks the paddle as penalty *(shipped: `cursed`)*
 40. **Chain Brick** — destroying it chains to adjacent bricks of same tier (domino)
 41. **Ghost Brick** — invisible until ball gets within 60px; then reveals itself
 42. **Boss Core Brick** — unbreakable until all normal bricks cleared; final mechanic
@@ -98,12 +101,12 @@
 62. **Screen Warp** — at high combo, screen edges pulse/breathe in biome color
 63. **Parallax Stars** — background star layers move at different speeds (depth effect)
 64. 💎 **Boss Aura** — boss bricks pulse with a halo glow that grows as boss HP drops
-65. **Score Text Size** — big points popup (500+) renders larger and stays longer
+65. ✅ **Score Text Size** — big points popup (500+) renders in the larger font *(shipped)*
 66. **Biome Transition Fade** — full-screen fade through biome accent color on round change
 67. **Rainbow Paddle** — paddle cycles through HSV colors at high combo
 68. **Depth Shadow** — bricks cast a subtle drop shadow beneath them
 69. **Sparkle Collect** — coins/drops emit sparkle burst when collected
-70. 💎 **Victory Fountain** — clearing a round: gold particle fountain from all brick positions
+70. ✅ 💎 **Victory Fountain** — clearing a round: gold particle fountain + "ROUND CLEAR" *(shipped)*
 
 ---
 
