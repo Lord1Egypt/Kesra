@@ -5,11 +5,18 @@ state.py — shared game state (score, lives, combo, round)
 
 class GameState:
     MAX_LIVES = 5
+    SPEEDS = [0.5, 1.0, 1.5, 2.0]
 
     def __init__(self):
         self.reset()
         self.best_score = 0
         self.best_round = 1
+        self.auto_play  = False
+        self.speed_idx  = 1        # index into SPEEDS; default 1.0×
+
+    @property
+    def speed(self) -> float:
+        return self.SPEEDS[self.speed_idx]
 
     def reset(self):
         self.score  = 0
