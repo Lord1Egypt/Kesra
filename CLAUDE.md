@@ -5,6 +5,9 @@ This file is auto-loaded by Claude Code whenever working in this directory. It r
 lives in `GAME_DESIGN.md`; phase tracking lives in `ROADMAP.md`; this file is "what's actually
 built and how to keep going."
 
+> **Start here:** `STATUS.md` is the consolidated "what's done / what remains" snapshot —
+> read it first when resuming.
+
 ## Non-negotiable design constraint
 **The game has no level cap.** Worlds 1-9 are biomes that cycle forever (`round → biome →
 cycle`), difficulty and drop rarity scale with the cycle number, bosses recur scaled instead of
