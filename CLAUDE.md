@@ -30,6 +30,7 @@ levelgen.py    generate_round(n) → procedural brick grid dict (no JSON files n
 entities.py    Ball, Paddle, Brick, Drop classes
 scenes.py      MenuScene, PlayScene, GameOverScene
 state.py       GameState: score/lives/combo/coins/powerups; add_score(), lose_life(), etc.
+storage.py     cross-platform persistence: browser localStorage → JSON file → in-memory
 assets/fonts/Cairo.ttf   Arabic TTF — loaded by scenes._fonts() for proper كِسرة rendering
 ```
 

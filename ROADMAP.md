@@ -73,7 +73,7 @@ Core invariants:
 - [ ] Shop (paddle/ball skins) wired to persistent coins
 - [ ] Achievements
 - [ ] Daily/weekly challenge modifiers
-- [ ] Save to localStorage (web) / file (desktop)
+- [x] Save to localStorage (web) / file (desktop) — `storage.py`; persists best score/round + settings
 
 ### Phase 4 — Mobile
 - [ ] Android APK via Pygbag or Buildozer

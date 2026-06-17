@@ -139,8 +139,8 @@
 
 ## 💾 SAVE & ONLINE
 
-91. **Local Save** — save score, round, coins, unlocks to localStorage (web) / file (desktop)
-92. **Auto-save** — save state after every round so browser refresh doesn't lose progress
+91. ✅ **Local Save** — best score/round + settings to localStorage (web) / file (desktop) *(shipped: `storage.py`)*
+92. 🔶 **Auto-save** — saves on game-over + play-start; per-round autosave still TODO
 93. **Global Leaderboard** — top 100 scores with country flags
 94. **Share Score** — "I scored 12,450 on Round 34!" copy-to-clipboard button
 95. **Replay Last Run** — record ball/paddle positions, replay as ghost after game over

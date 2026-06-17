@@ -40,3 +40,6 @@ gh_*
 
 # Logs
 *.log
+
+# Local save file (desktop persistence fallback)
+kesra_save.json

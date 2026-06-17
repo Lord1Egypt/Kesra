@@ -1,6 +1,7 @@
 """
 state.py — shared game state (score, lives, combo, round)
 """
+import storage
 
 
 class GameState:
@@ -13,10 +14,28 @@ class GameState:
         self.best_round = 1
         self.auto_play  = False
         self.speed_idx  = 1        # index into SPEEDS; default 1.0×
+        self.load_persistent()
 
     @property
     def speed(self) -> float:
         return self.SPEEDS[self.speed_idx]
+
+    # ── persistence ─────────────────────────────────────────────────────────────
+    def load_persistent(self) -> None:
+        d = storage.load()
+        self.best_score = int(d.get("best_score", self.best_score))
+        self.best_round = int(d.get("best_round", self.best_round))
+        self.auto_play  = bool(d.get("auto_play", self.auto_play))
+        si = int(d.get("speed_idx", self.speed_idx))
+        self.speed_idx  = si if 0 <= si < len(self.SPEEDS) else 1
+
+    def save_persistent(self) -> None:
+        storage.save({
+            "best_score": self.best_score,
+            "best_round": self.best_round,
+            "auto_play":  self.auto_play,
+            "speed_idx":  self.speed_idx,
+        })
 
     def reset(self):
         self.score  = 0
