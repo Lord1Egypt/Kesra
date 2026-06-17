@@ -137,5 +137,17 @@ html = html.replace("</body>", loading_overlay + "\n</body>")
 html = html.replace("<title>kesra</title>",
                     "<title>Kesra — Egyptian Brick-Breaker</title>")
 
+# ── 6. Keep the page dark instead of Pygbag's default grey ────────────────────
+# The template hard-codes the body background to grey once the runtime starts,
+# which clashes with the dark Egyptian theme — keep it dark.
+html = html.replace('style.background = "#7f7f7f"',
+                    'style.background = "#05050F"')
+
+# ── 7. Replace the jarring default gesture prompt with a themed one ────────────
+# Browsers require a user gesture before audio/canvas can start, so the prompt
+# can't be removed outright — but we retheme it to fit the splash.
+html = html.replace('"Ready to start ! Please click/touch page"',
+                    '"\\u25B6  TAP TO PLAY"')
+
 open(path, "w", encoding="utf-8").write(html)
 print(f"Patched: {path}")
