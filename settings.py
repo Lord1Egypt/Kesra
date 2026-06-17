@@ -66,13 +66,23 @@ BRICK_TIERS = [
 
 # ── Drop types ────────────────────────────────────────────────────────────────
 DROPS = {
-    "bronze_coin": {"color": (180, 110,  40), "label": "+10"},
-    "silver_coin": {"color": (180, 180, 200), "label": "+50"},
-    "gold_coin":   {"color": (255, 215,   0), "label": "+200"},
-    "heart":       {"color": (220,  40,  80), "label": "♥"},
-    "shield":      {"color": ( 80, 160, 255), "label": "🛡"},
-    "wide":        {"color": (100, 220, 100), "label": "⟺"},
-    "fireball":    {"color": (255,  80,   0), "label": "🔥"},
-    "magnet":      {"color": (180,   0, 255), "label": "⚡"},
-    "slow":        {"color": (200, 200, 255), "label": "❄"},
+    # common
+    "bronze_coin": {"color": (180, 110,  40), "label": "+10",   "rarity": "common"},
+    "silver_coin": {"color": (180, 180, 200), "label": "+50",   "rarity": "rare"},
+    "gold_coin":   {"color": (255, 215,   0), "label": "+200",  "rarity": "epic"},
+    "heart":       {"color": (220,  40,  80), "label": "♥",     "rarity": "rare"},
+    "shield":      {"color": ( 80, 160, 255), "label": "🛡",    "rarity": "rare"},
+    # paddle power-ups
+    "wide":        {"color": (100, 220, 100), "label": "⟺",    "rarity": "rare"},
+    "magnet":      {"color": (180,   0, 255), "label": "⚡",    "rarity": "rare"},
+    # ball power-ups
+    "fireball":    {"color": (255,  80,   0), "label": "🔥",    "rarity": "rare"},
+    "slow":        {"color": (200, 200, 255), "label": "❄",     "rarity": "common"},
+    "multi_ball":  {"color": (255, 220,  80), "label": "×2",    "rarity": "epic"},
+    # offensive
+    "bomb":        {"color": (220,  60,  10), "label": "💣",    "rarity": "epic"},
+    "rocket":      {"color": (200, 200, 255), "label": "🚀",    "rarity": "epic"},
+    # score
+    "star":        {"color": (255, 255, 100), "label": "★×2",   "rarity": "epic"},
+    "diamond":     {"color": (120, 220, 255), "label": "+1k",   "rarity": "legendary"},
 }

@@ -226,6 +226,8 @@ class GameOverScene:
 
 # ── PLAY ──────────────────────────────────────────────────────────────────────
 class PlayScene:
+    MAX_BALLS = 6   # hard cap so multi-ball stacking can't explode
+
     def __init__(self, gs: GameState):
         self.gs        = gs
         self.gs.reset()
@@ -245,7 +247,7 @@ class PlayScene:
         self.bricks: list[Brick] = []
         self.drops:  list[Drop]  = []
         self.paddle  = Paddle(W / 2, PADDLE_Y)
-        self.ball: Ball | None   = None
+        self.balls: list[Ball] = []
 
         # round-transition flash
         self._flash   = 0.0
@@ -258,7 +260,45 @@ class PlayScene:
         self._auto_launch_t = 0.6   # seconds before auto-launch after attach
         self._auto_launch_timer = 0.0
 
+        # pause menu
+        self.paused = False
+
         self._start_round()
+
+    # ── ball helpers ────────────────────────────────────────────────────────────
+    @property
+    def ball(self) -> Ball | None:
+        """Primary ball (the attached one if any, else the first) for AI/aim/attach."""
+        if not self.balls:
+            return None
+        for b in self.balls:
+            if b.attached:
+                return b
+        return self.balls[0]
+
+    def _launch_all_attached(self) -> None:
+        for b in self.balls:
+            if b.attached:
+                b.launch(random.uniform(-80, -100))
+
+    def _spawn_multiball(self) -> None:
+        """Clone every live ball into the air (up to MAX_BALLS) with a spread."""
+        live = [b for b in self.balls if not b.attached]
+        if not live:                       # nothing in flight → launch then clone
+            self._launch_all_attached()
+            live = [b for b in self.balls if not b.attached]
+        new: list[Ball] = []
+        for b in live:
+            if len(self.balls) + len(new) >= self.MAX_BALLS:
+                break
+            nb = Ball(b.x, b.y, color=b.color)
+            nb.speed    = b.speed
+            nb.fireball = b.fireball
+            nb.attached = False
+            ang = math.degrees(math.atan2(b.vy, b.vx)) + random.uniform(-40, 40)
+            nb.launch(ang)
+            new.append(nb)
+        self.balls += new
 
     # ── round management ──────────────────────────────────────────────────────
     def _start_round(self) -> None:
@@ -291,22 +331,55 @@ class PlayScene:
         self._announce_t = 2.5
 
     def _spawn_ball(self, accent: tuple) -> None:
-        self.ball = Ball(self.paddle.rect.centerx,
-                         self.paddle.rect.top - BALL_R - 1,
-                         color=accent)
-        self.ball.attached = True
+        """Reset to a single attached ball waiting on the paddle."""
+        ball = Ball(self.paddle.rect.centerx,
+                    self.paddle.rect.top - BALL_R - 1,
+                    color=accent)
+        ball.attached = True
+        self.balls = [ball]
+        self._auto_launch_timer = 0.0
+
+    # ── pause-menu rects ────────────────────────────────────────────────────────
+    def _pause_buttons(self) -> dict:
+        cx = W // 2
+        return {
+            "resume":  pygame.Rect(cx - 100, H // 2 - 20, 200, 44),
+            "restart": pygame.Rect(cx - 100, H // 2 + 36, 200, 44),
+            "menu":    pygame.Rect(cx - 100, H // 2 + 92, 200, 44),
+        }
 
     # ── update ────────────────────────────────────────────────────────────────
     def update(self, dt: float, events: list) -> str | None:
+        # ── paused: only handle pause-menu input, freeze the world ──────────────
+        if self.paused:
+            for ev in events:
+                if ev.type == pygame.KEYDOWN:
+                    if ev.key in (pygame.K_ESCAPE, pygame.K_p):
+                        self.paused = False
+                    elif ev.key == pygame.K_r:
+                        return "restart"
+                    elif ev.key == pygame.K_q:
+                        return "menu"
+                elif ev.type == pygame.MOUSEBUTTONDOWN:
+                    btns = self._pause_buttons()
+                    if btns["resume"].collidepoint(ev.pos):
+                        self.paused = False
+                    elif btns["restart"].collidepoint(ev.pos):
+                        return "restart"
+                    elif btns["menu"].collidepoint(ev.pos):
+                        return "menu"
+            return None
+
         self.t += dt
+        self.gs.update_timers(dt)
 
         for ev in events:
             if ev.type == pygame.KEYDOWN:
                 self.paddle.on_keydown(ev.key)
-                if ev.key == pygame.K_ESCAPE:
-                    return "menu"
-                if ev.key == pygame.K_SPACE and self.ball and self.ball.attached:
-                    self.ball.launch(random.uniform(-80, -100))
+                if ev.key in (pygame.K_ESCAPE, pygame.K_p):
+                    self.paused = True
+                if ev.key == pygame.K_SPACE:
+                    self._launch_all_attached()
             elif ev.type == pygame.KEYUP:
                 self.paddle.on_keyup(ev.key)
             elif ev.type == pygame.FINGERMOTION:
@@ -314,8 +387,7 @@ class PlayScene:
                 tx = int(ev.x * W)
                 self.paddle.x = max(0.0, min(W - self.paddle.w, tx - self.paddle.w / 2))
             elif ev.type == pygame.FINGERDOWN:
-                if self.ball and self.ball.attached:
-                    self.ball.launch(random.uniform(-80, -100))
+                self._launch_all_attached()
 
         if self.gs.auto_play:
             self._run_ai(dt)
@@ -326,19 +398,30 @@ class PlayScene:
             mx, _ = pygame.mouse.get_pos()
             if pygame.mouse.get_pressed()[0]:
                 self.paddle.x = max(0.0, min(W - self.paddle.w, mx - self.paddle.w / 2))
+                self._launch_all_attached()
 
-        # keep attached ball on paddle
-        if self.ball and self.ball.attached:
-            self.ball.x = self.paddle.rect.centerx
-            self.ball.y = self.paddle.rect.top - BALL_R - 1
-            if not self.gs.auto_play and pygame.mouse.get_pressed()[0]:
-                self.ball.launch(random.uniform(-80, -100))
+        # update every ball
+        for b in self.balls:
+            if b.attached:
+                b.x = self.paddle.rect.centerx
+                b.y = self.paddle.rect.top - BALL_R - 1
+                continue
+            if b.update(dt, W, H) == "lost":
+                b.alive = False
+                self.particles.burst(b.x, H - 36, (200, 60, 60), n=10, speed=120, r=3)
 
-        if self.ball:
-            result = self.ball.update(dt, W, H)
-            self._check_collisions()
-            if result == "lost":
-                self._on_ball_lost()
+        # collisions for each live, launched ball
+        for b in self.balls:
+            if b.alive and not b.attached:
+                self._ball_collisions(b)
+        self.balls  = [b for b in self.balls if b.alive]
+        self.bricks = [br for br in self.bricks if br.alive]
+
+        # round clear?
+        if not self.bricks:
+            self._next_round()
+        elif not self.balls:
+            self._on_all_balls_lost()
 
         for brick in self.bricks:
             brick.update(dt)
@@ -363,15 +446,17 @@ class PlayScene:
             return "game_over"
         return None
 
-    # ── collision ─────────────────────────────────────────────────────────────
-    def _check_collisions(self) -> None:
-        if not self.ball or self.ball.attached:
-            return
-        b = self.ball
-
+    # ── collision (per ball) ────────────────────────────────────────────────────
+    def _ball_collisions(self, b: Ball) -> None:
         # paddle
         if b.vy > 0 and b.overlaps_rect(self.paddle.rect):
-            b.bounce_off_paddle(self.paddle.rect)
+            if self.paddle.magnet:
+                # sticky paddle — catch the ball, re-launch on next input
+                b.attached = True
+                b.x = self.paddle.rect.centerx
+                b.y = self.paddle.rect.top - b.r - 1
+            else:
+                b.bounce_off_paddle(self.paddle.rect)
             self.paddle.on_ball_hit()
             self.gs.add_combo()
             self.particles.spark(b.x, b.y, b.color, n=5, speed=60)
@@ -394,11 +479,6 @@ class PlayScene:
                     # hit-but-not-killed: small ring + spark
                     self.rings.add(brick.rect.centerx, brick.rect.centery,
                                    brick.color, max_r=30, life=0.25, width=2)
-
-        self.bricks = [br for br in self.bricks if br.alive]
-
-        if not self.bricks:
-            self._next_round()
 
     def _on_brick_killed(self, brick: Brick, pts: int) -> None:
         cx, cy = brick.rect.centerx, brick.rect.centery
@@ -427,11 +507,11 @@ class PlayScene:
             t = allowed[_r.randint(0, len(allowed) - 1)]
             self.drops.append(Drop(brick.rect.centerx, brick.rect.centery, t, self.f_tiny))
 
-    def _on_ball_lost(self) -> None:
+    def _on_all_balls_lost(self) -> None:
         self.gs.reset_combo()
         self.gs.lose_life()
         accent = self._round_data["biome"]["accent"]
-        self.particles.burst(self.ball.x, H - 40, (200, 60, 60), n=25, speed=140, r=4)
+        self.particles.burst(W // 2, H - 40, (200, 60, 60), n=25, speed=140, r=4)
         self._flash   = 0.3
         self._flash_c = (180, 30, 30)
         if not self.gs.game_over:
@@ -446,6 +526,9 @@ class PlayScene:
             self.gs.add_score(50)
         elif t == "gold_coin":
             self.gs.add_score(200)
+        elif t == "diamond":
+            self.gs.add_score(1000)
+            self.floats.add("💎 +1,000", W // 2, H // 2, (120, 220, 255), self.f_med, 1.6)
         elif t == "heart":
             self.gs.add_life()
             self.floats.add("♥ +1 LIFE", W // 2, H // 2, C_HEART, self.f_med, 1.5)
@@ -455,15 +538,68 @@ class PlayScene:
         elif t == "wide":
             self.paddle.resize(1.4, 8.0)
             self.floats.add("⟺ WIDE", W // 2, H // 2, (100, 220, 100), self.f_med, 1.5)
-        elif t == "fireball" and self.ball:
-            self.ball.fireball = True
+        elif t == "fireball":
+            for b in self.balls:
+                b.fireball = True
             self.floats.add("🔥 FIREBALL", W // 2, H // 2, (255, 80, 0), self.f_med, 1.5)
         elif t == "magnet":
             self.paddle.activate_magnet(8.0)
             self.floats.add("⚡ MAGNET", W // 2, H // 2, (180, 0, 255), self.f_med, 1.5)
-        elif t == "slow" and self.ball:
-            self.ball.speed = max(200, self.ball.speed * 0.75)
+        elif t == "slow":
+            for b in self.balls:
+                b.speed = max(200, b.speed * 0.75)
             self.floats.add("❄ SLOW", W // 2, H // 2, (200, 200, 255), self.f_med, 1.5)
+        elif t == "multi_ball":
+            self._spawn_multiball()
+            self.floats.add("×2 MULTI-BALL", W // 2, H // 2, (255, 220, 80), self.f_med, 1.5)
+        elif t == "star":
+            self.gs.mult   = 2.0
+            self.gs.star_t = 15.0
+            self.floats.add("★ DOUBLE SCORE", W // 2, H // 2, (255, 255, 100), self.f_med, 1.6)
+        elif t == "bomb":
+            self._detonate_bomb()
+            self.floats.add("💣 BOOM!", W // 2, H // 2, (255, 120, 40), self.f_med, 1.4)
+        elif t == "rocket":
+            self._fire_rocket()
+            self.floats.add("🚀 ROW BUSTER", W // 2, H // 2, (200, 220, 255), self.f_med, 1.4)
+
+    # ── area-effect drops ───────────────────────────────────────────────────────
+    def _destroy_bricks(self, targets: list[Brick]) -> None:
+        for brick in targets:
+            if not brick.alive:
+                continue
+            brick.alive = False
+            pts = self.gs.add_score(brick.pts)
+            self._on_brick_killed(brick, pts)
+        self.bricks = [br for br in self.bricks if br.alive]
+
+    def _detonate_bomb(self) -> None:
+        """Destroy a 3×3 cluster around the lowest brick nearest paddle centre."""
+        if not self.bricks:
+            return
+        px = self.paddle.centerx
+        anchor = min(self.bricks,
+                     key=lambda br: (-br.row, abs(br.rect.centerx - px)))
+        ax, ay = anchor.rect.center
+        radius = max(BRICK_W, BRICK_H) * 1.6
+        cluster = [br for br in self.bricks
+                   if abs(br.rect.centerx - ax) <= radius
+                   and abs(br.rect.centery - ay) <= radius]
+        self._shake = 0.35
+        self.rings.add(ax, ay, (255, 140, 40), max_r=120, life=0.5, width=5)
+        self._destroy_bricks(cluster)
+
+    def _fire_rocket(self) -> None:
+        """Destroy the bottom-most row of bricks (closest to the paddle)."""
+        if not self.bricks:
+            return
+        max_row = max(br.row for br in self.bricks)
+        row = [br for br in self.bricks if br.row == max_row]
+        self._shake = 0.3
+        for br in row:
+            self.particles.burst(br.rect.centerx, br.rect.centery,
+                                 (200, 220, 255), n=6, speed=180, r=2)
+        self._destroy_bricks(row)
 
     def _next_round(self) -> None:
         self.gs.next_round()
@@ -471,19 +607,20 @@ class PlayScene:
 
     # ── auto-play AI ──────────────────────────────────────────────────────────
     def _run_ai(self, dt: float) -> None:
-        if not self.ball:
-            return
-        if self.ball.attached:
+        # any ball still waiting on the paddle? hold centre, then auto-launch
+        if any(b.attached for b in self.balls):
             self._auto_launch_timer += dt
-            # track ball to center of paddle while attached
-            self.paddle.x = max(0.0, min(W - self.paddle.w,
-                                         self.ball.x - self.paddle.w / 2))
             if self._auto_launch_timer >= self._auto_launch_t:
                 self._auto_launch_timer = 0.0
-                self.ball.launch(random.uniform(-75, -105))
+                self._launch_all_attached()
             return
-        # track ball x with slight imperfection so it's not perfect
-        target_x = self.ball.x - self.paddle.w / 2 + random.uniform(-8, 8)
+        # track the lowest descending ball (the one most likely to be lost)
+        descending = [b for b in self.balls if b.vy > 0]
+        target_ball = max(descending, key=lambda b: b.y) if descending else \
+                      (min(self.balls, key=lambda b: b.y) if self.balls else None)
+        if not target_ball:
+            return
+        target_x = target_ball.x - self.paddle.w / 2 + random.uniform(-8, 8)
         self.paddle.x += (target_x - self.paddle.x) * min(1.0, dt * 9)
         self.paddle.x  = max(0.0, min(W - self.paddle.w, self.paddle.x))
 
@@ -510,6 +647,11 @@ class PlayScene:
 
         for brick in self.bricks:
             brick.draw(scene)
+            # HP indicator on tougher bricks
+            if brick.alive and brick.max_hp >= 3 and brick.hp > 1:
+                hp = self.f_tiny.render(str(brick.hp), True, (255, 255, 255))
+                hp.set_alpha(150)
+                scene.blit(hp, hp.get_rect(center=brick.rect.center))
 
         self.rings.draw(scene)
 
@@ -518,8 +660,12 @@ class PlayScene:
 
         self.particles.draw(scene)
 
-        if self.ball:
-            self.ball.draw(scene, self.t)
+        # aim guide while a ball waits on the paddle (manual play only)
+        if not self.gs.auto_play and any(b.attached for b in self.balls):
+            self._draw_aim_guide(scene)
+
+        for b in self.balls:
+            b.draw(scene, self.t)
 
         self.paddle.draw(scene)
 
@@ -545,15 +691,54 @@ class PlayScene:
 
         surf.blit(scene, (shake_x, shake_y))
 
+        if self.paused:
+            self._draw_pause(surf)
+
+    def _draw_aim_guide(self, surf: pygame.Surface) -> None:
+        ball = next((b for b in self.balls if b.attached), None)
+        if not ball:
+            return
+        col = (255, 255, 255, 90)
+        for i in range(1, 9):
+            y = ball.y - i * 22
+            if y < 30:
+                break
+            r = 3 if i % 2 == 0 else 2
+            dot = pygame.Surface((r * 2, r * 2), pygame.SRCALPHA)
+            pygame.draw.circle(dot, (255, 255, 255, max(20, 120 - i * 12)), (r, r), r)
+            surf.blit(dot, (int(ball.x) - r, int(y) - r))
+
+    def _draw_pause(self, surf: pygame.Surface) -> None:
+        ov = pygame.Surface((W, H), pygame.SRCALPHA)
+        ov.fill((0, 0, 10, 200))
+        surf.blit(ov, (0, 0))
+        title = self.f_big.render("PAUSED", True, C_GOLD)
+        surf.blit(title, title.get_rect(center=(W // 2, H // 2 - 90)))
+        labels = {"resume": "▶  RESUME", "restart": "↻  RESTART", "menu": "⌂  MENU"}
+        for key, rect in self._pause_buttons().items():
+            pygame.draw.rect(surf, (30, 25, 15), rect, border_radius=8)
+            pygame.draw.rect(surf, C_GOLD, rect, 2, border_radius=8)
+            lbl = self.f_med.render(labels[key], True, C_GOLD)
+            surf.blit(lbl, lbl.get_rect(center=rect.center))
+        hint = self.f_tiny.render("ESC/P resume  ·  R restart  ·  Q menu", True, C_DIM)
+        surf.blit(hint, hint.get_rect(center=(W // 2, H // 2 + 156)))
+
     def _draw_hud(self, surf: pygame.Surface) -> None:
         # score
         sc = self.f_med.render(f"{self.gs.score:,}", True, C_GOLD)
         surf.blit(sc, (10, 10))
 
-        # combo
+        # combo + meter bar toward next ×8 milestone
         if self.gs.combo > 1:
             co = self.f_sm.render(f"x{self.gs.combo}", True, C_GOLD_L)
             surf.blit(co, (10, 40))
+            frac = (self.gs.combo % 8) / 8.0
+            if self.gs.combo % 8 == 0:
+                frac = 1.0
+            bar = pygame.Rect(10, 62, 90, 5)
+            pygame.draw.rect(surf, (40, 35, 20), bar, border_radius=2)
+            fill = pygame.Rect(bar.x, bar.y, int(bar.w * frac), bar.h)
+            pygame.draw.rect(surf, C_GOLD, fill, border_radius=2)
 
         # lives (hearts)
         for i in range(GameState.MAX_LIVES):
@@ -568,10 +753,20 @@ class PlayScene:
         info  = self.f_tiny.render(f"Round {rnd}  ·  Cycle {cycle}  ·  {name}", True, C_DIM)
         surf.blit(info, info.get_rect(center=(W // 2, H - 14)))
 
-        # shield indicator
+        # active-effect indicators (bottom-left stack)
+        y = H - 28
         if self.gs.powerups.get("shield"):
             sh = self.f_tiny.render("🛡 SHIELD", True, (80, 160, 255))
-            surf.blit(sh, (10, H - 28))
+            surf.blit(sh, (10, y)); y -= 18
+        if self.gs.star_t > 0:
+            st = self.f_tiny.render(f"★ ×2  {self.gs.star_t:0.0f}s", True, (255, 255, 100))
+            surf.blit(st, (10, y)); y -= 18
+        if self.paddle.magnet:
+            mg = self.f_tiny.render("⚡ MAGNET", True, (180, 120, 255))
+            surf.blit(mg, (10, y)); y -= 18
+        if len(self.balls) > 1:
+            mb = self.f_tiny.render(f"● ×{len(self.balls)}", True, (255, 220, 80))
+            surf.blit(mb, (10, y)); y -= 18
 
         # speed + auto-play pill (top-right, below hearts)
         spd_str = GameState.SPEEDS[self.gs.speed_idx]

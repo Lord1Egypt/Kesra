@@ -18,13 +18,21 @@ def generate_round(round_number: int) -> dict:
     grid = _make_grid(base_rows, diff, biome, is_boss, cycle)
 
     # drops unlock progressively
-    drops = ["bronze_coin"]
+    drops = ["bronze_coin", "bronze_coin", "slow"]   # common weighted
+    if round_number >= 3:
+        drops += ["heart"]
     if round_number >= 5:
-        drops += ["silver_coin", "heart"]
+        drops += ["silver_coin", "shield", "wide"]
+    if round_number >= 10:
+        drops += ["multi_ball"]
     if round_number >= 15:
-        drops += ["gold_coin", "shield", "wide"]
+        drops += ["gold_coin", "bomb"]
+    if round_number >= 20:
+        drops += ["star", "rocket"]
     if round_number >= 30:
-        drops += ["fireball", "magnet", "slow"]
+        drops += ["fireball", "magnet"]
+    if round_number >= 50:
+        drops += ["diamond"]
 
     return {
         "round":    round_number,

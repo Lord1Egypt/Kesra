@@ -55,12 +55,16 @@ Core invariants:
 - [x] `.github/workflows/web-deploy.yml` — Pygbag WASM build + GitHub Pages deploy on every push
 - [x] GitHub Pages enabled at `https://lord1egypt.github.io/Kesra/`
 - [ ] Verify live URL loads and game runs in browser after CI succeeds
-- [ ] Touch input for paddle (mobile browsers) alongside keyboard
+- [x] Touch input for paddle (mobile browsers) alongside keyboard — FINGERMOTION/FINGERDOWN
+- [x] AUTO PLAY mode + speed control (½×–2×) + Egyptian themed loading screen
+- [x] Pause menu (ESC/P → Resume/Restart/Menu), aim guide, combo meter, brick HP numbers
 
 ### Phase 2 — Art & Feel
 - [ ] Gemini Imagen 4 backgrounds for all 9 biomes (unlock: enable API billing at ai.dev)
   - Use: `python3 ~/.claude/tools/gemini_image.py --kesra-biomes --out-dir assets/bg/`
-- [ ] All power-up/drop effects from `GAME_DESIGN.md` wired to gameplay
+- [~] Power-up/drop effects wired to gameplay — **done:** multi-ball, star (×2), bomb,
+  rocket (row buster), diamond, sticky-magnet, fireball, wide, slow, shield, coins, heart.
+  **TODO:** laser, ghost-ball, lightning, meteor, whirlwind, eye-of-horus (see FUTURE_IMPROVEMENTS.md)
 - [ ] Per-biome particle theme (sand/fire/gold/stardust)
 - [ ] Boss telegraphing + multi-phase weak points
 - [ ] Sound effects + per-biome music
