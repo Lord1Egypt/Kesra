@@ -10,6 +10,7 @@ from entities import Ball, Paddle, Brick, Drop
 from levelgen import generate_round
 from particles import ParticleSystem, FloatTextSystem, RingSystem, AmbientSystem
 import gfx
+import audio
 from rtl import ar
 from achievements import ACHIEVEMENTS, TOTAL
 
@@ -97,6 +98,10 @@ class MenuScene:
                     return "play"
                 if ev.key == pygame.K_a:
                     self.show_ach = True
+                if ev.key == pygame.K_m:
+                    self.gs.muted = not self.gs.muted
+                    audio.set_muted(self.gs.muted)
+                    self.gs.save_persistent()
                 if ev.key == pygame.K_ESCAPE:
                     return "quit"
             if ev.type == pygame.MOUSEBUTTONDOWN:
@@ -176,7 +181,8 @@ class MenuScene:
         ach = self.f_tiny.render(f"🏆 Achievements  {n_unlocked}/{TOTAL}   (press A)", True, C_GOLD_D)
         surf.blit(ach, ach.get_rect(center=(W // 2, H // 2 + 178)))
 
-        hint = self.f_tiny.render("← → / drag to move  |  SPACE to launch  |  ESC to quit", True, C_DIM)
+        snd = "🔇 muted" if self.gs.muted else "🔊 sound on"
+        hint = self.f_tiny.render(f"← → / drag  ·  SPACE launch  ·  M {snd}  ·  ESC quit", True, C_DIM)
         surf.blit(hint, hint.get_rect(center=(W // 2, H - 24)))
 
         if self.show_ach:
@@ -220,6 +226,7 @@ class GameOverScene:
         self.gs  = gs
         self.t   = 0.0
         self.f_big, self.f_med, self.f_sm, self.f_tiny, _, _ = _fonts()
+        audio.play("over")
 
     def update(self, dt: float, events: list) -> str | None:
         self.t += dt
@@ -418,6 +425,10 @@ class PlayScene:
                 self.paddle.on_keydown(ev.key)
                 if ev.key in (pygame.K_ESCAPE, pygame.K_p):
                     self.paused = True
+                if ev.key == pygame.K_m:
+                    self.gs.muted = not self.gs.muted
+                    audio.set_muted(self.gs.muted)
+                    self.gs.save_persistent()
                 if ev.key == pygame.K_SPACE:
                     self._launch_all_attached()
             elif ev.type == pygame.KEYUP:
@@ -500,6 +511,7 @@ class PlayScene:
             self.paddle.on_ball_hit()
             self.gs.add_combo()
             self._toast(self.gs.record_combo(self.gs.combo))
+            audio.play("paddle")
             self.particles.spark(b.x, b.y, b.color, n=5, speed=60)
 
         # bricks
@@ -524,6 +536,7 @@ class PlayScene:
     def _on_brick_killed(self, brick: Brick, pts: int, _depth: int = 0) -> None:
         cx, cy = brick.rect.centerx, brick.rect.centery
         self._toast(self.gs.record_brick())
+        audio.play_brick(self.gs.combo)
         # big particle burst
         self.particles.burst(cx, cy, brick.color, n=22, speed=220, r=5, life=0.65)
         # second burst of white sparks
@@ -546,6 +559,7 @@ class PlayScene:
         c = self.gs.combo
         if c and c % 8 == 0:
             self._shake = 0.30
+            audio.play("combo")
             # dramatic combo: full-width gold flash + text
             self._flash   = 0.18
             self._flash_c = C_GOLD
@@ -582,6 +596,7 @@ class PlayScene:
     def _on_all_balls_lost(self) -> None:
         self.gs.reset_combo()
         self.gs.lose_life()
+        audio.play("lose")
         accent = self._round_data["biome"]["accent"]
         self.particles.burst(W // 2, H - 40, (200, 60, 60), n=25, speed=140, r=4)
         self._flash   = 0.3
@@ -593,6 +608,7 @@ class PlayScene:
         self.particles.burst(*drop.rect.center, drop.color, n=10, speed=100, r=3)
         self._toast(self.gs.record_drop())
         t = drop.type
+        audio.play("coin" if t.endswith("_coin") or t == "diamond" else "power")
         if t == "bronze_coin":
             self.gs.add_score(10)
         elif t == "silver_coin":
@@ -659,6 +675,7 @@ class PlayScene:
                    if abs(br.rect.centerx - ax) <= radius
                    and abs(br.rect.centery - ay) <= radius]
         self._shake = 0.35
+        audio.play("boom")
         self.rings.add(ax, ay, (255, 140, 40), max_r=120, life=0.5, width=5)
         self._destroy_bricks(cluster)
 
@@ -669,6 +686,7 @@ class PlayScene:
         max_row = max(br.row for br in self.bricks)
         row = [br for br in self.bricks if br.row == max_row]
         self._shake = 0.3
+        audio.play("boom")
         for br in row:
             self.particles.burst(br.rect.centerx, br.rect.centery,
                                  (200, 220, 255), n=6, speed=180, r=2)
@@ -690,6 +708,7 @@ class PlayScene:
 
     def _victory_fountain(self) -> None:
         """Gold particle fountain celebrating a cleared round (after the reset)."""
+        audio.play("clear")
         for _ in range(7):
             x = random.randint(40, W - 40)
             self.particles.burst(x, H - 30, C_GOLD, n=10, speed=320, r=4,
@@ -867,3 +886,7 @@ class PlayScene:
         spd_col = (0, 255, 160) if self.gs.auto_play else C_GOLD_D
         spd_surf = self.f_tiny.render(spd_lbl, True, spd_col)
         surf.blit(spd_surf, spd_surf.get_rect(topright=(W - 10, 36)))
+
+        if self.gs.muted:
+            mute = self.f_tiny.render("🔇", True, C_DIM)
+            surf.blit(mute, mute.get_rect(topright=(W - 10, 52)))

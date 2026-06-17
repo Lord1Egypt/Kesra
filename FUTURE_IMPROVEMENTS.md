@@ -17,6 +17,10 @@
 - Special bricks: explosive (chain), cursed (paddle shrink), gift (guaranteed good drop)
 - Victory fountain + "ROUND CLEAR" celebration  ·  bigger score popups for 500+ point bricks
 - Persistent save (best score/round + settings) via localStorage / file
+- Achievements (14, toast + menu panel) with persisted lifetime stats
+- Procedural audio (zero-dep synth): paddle, brick (combo-pitched), coin, power-up,
+  combo, bomb, life-lost, round-clear, game-over — M to mute (persisted)
+- Python CI: headless smoke test (11 checks) replaces the dead Godot workflow
 
 ---
 
@@ -113,15 +117,15 @@
 ## 🔊 SOUND & MUSIC
 
 71. **Per-biome ambient track** — 9 looping musical themes (1 per biome)
-72. **Brick hit SFX** — different sound per brick tier (mud=thud, gold=ding, obsidian=boom)
-73. **Paddle hit SFX** — satisfying thwack; pitch shifts up on combo streak
+72. ✅ **Brick hit SFX** — procedural blip, **pitch rises with combo** *(shipped: `audio.play_brick`)*
+73. ✅ **Paddle hit SFX** — square "thock" on every paddle bounce *(shipped)*
 74. **Combo voice line** — "Combo x8!" / "UNSTOPPABLE!" audio cues at milestones
 75. **Ball launch SFX** — whoosh sound on Space press
-76. **Power-up collect SFX** — unique sound per drop type
+76. ✅ **Power-up collect SFX** — coin chime vs. power-up arpeggio *(shipped)*
 77. **Boss music** — intense drum/oud track replaces biome music during boss rounds
-78. **Life lost SFX** — dramatic sting + brief silence
-79. **Game over music** — melancholic Egyptian melody
-80. **Level clear fanfare** — short triumphant horn burst on round clear
+78. ✅ **Life lost SFX** — descending square tone *(shipped)*
+79. ✅ **Game over SFX** — slow low square descent *(shipped)*
+80. ✅ **Level clear fanfare** — ascending arpeggio on round clear *(shipped)*
 
 ---
 
@@ -163,7 +167,7 @@
 ## 🛠️ TECHNICAL & UX
 
 101. ✅ **Pause menu** — ESC opens pause with Resume / Restart / Quit options *(shipped)*
-102. **Settings screen** — volume, ball speed, colorblind mode, language toggle
+102. 🔶 **Settings screen** — mute (M key, persisted) + speed tabs done; full screen (colorblind/language) TODO
 103. **Colorblind mode** — swap brick colors to colorblind-safe palette
 104. **FPS counter** — dev toggle (F3) to show FPS overlay
 105. **Tutorial overlay** — first run: animated arrow shows "move paddle → press SPACE"
