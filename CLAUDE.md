@@ -59,14 +59,20 @@ python -m pygbag --build --app_name kesra main.py
 - Ball physics: wall bounces, paddle angle-based launch, brick overlap side-detection
 - Particle system: burst, sparks, ambient floating sparkles, rising float-text, ring shockwaves
 - 6 brick tiers (mud → obsidian), rainbow HSV trail on ball, per-biome atmospheric glow
-- Drops: bronze/silver/gold coins, heart, shield, wide, fireball, magnet, slow
-- HUD: score (top-left), combo, lives (hearts), round/cycle/biome (bottom)
-- Screen shake on 8x combo multiples
+- Drops: bronze/silver/gold coins, diamond(+1k), heart, shield, wide, fireball, magnet,
+  slow, multi_ball, star(×2 score), bomb(3×3), rocket(row buster)
+- Multi-ball: `PlayScene.balls` is a list (cap `MAX_BALLS=6`); life lost only when ALL balls fall
+- Sticky magnet: paddle catches the ball while magnet active; re-launch on SPACE/click/touch
+- AUTO PLAY AI (`_run_ai`) tracks lowest descending ball; speed control via `gs.speed` (½×–2×)
+- Pause menu (ESC/P → Resume/Restart/Menu), aim-guide dotted line, combo meter bar, brick HP numbers
+- HUD: score (top-left), combo+meter, lives (hearts), active-effect stack, speed/auto pill,
+  round/cycle/biome (bottom)
+- Screen shake on 8x combo multiples + bomb/rocket
 - Cairo TTF font for correct Arabic rendering of كِسرة
-- All 3 scenes verified by 180-frame headless simulation without crash
+- All scenes verified by headless simulation (normal + boss + 20k-frame auto-play soak) without crash
 
 ## Known gaps / honest limitations
-- Magnet powerup is visual only (paddle draws blue, but no attraction physics yet)
+- Magnet is now a sticky-catch paddle (no mid-air attraction physics — that's a separate future item)
 - No save/shop/achievements yet (Phase 3 in ROADMAP.md)
 - No audio yet
 - Web deploy is set up but Pygbag WASM requires the game to `await asyncio.sleep(0)` every frame

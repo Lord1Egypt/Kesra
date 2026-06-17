@@ -2,30 +2,42 @@
 
 > Pick any item, branch off `main`, implement, PR. No order required.
 > Items marked 🔥 are highest impact for fun. Items marked 💎 are highest visual wow.
+> Items marked ✅ are already shipped.
+
+---
+
+## ✅ SHIPPED SO FAR
+- AUTO PLAY mode + speed tabs (½× / 1× / 1.5× / 2×) + Egyptian loading screen
+- Multi-Ball (×2 splitting, capped at 6 balls)  ·  Double Score star (×2 for 15s)
+- Bomb (3×3 cluster destroy)  ·  Rocket / Row Buster (clears bottom row)
+- Diamond (+1,000)  ·  sticky Magnet paddle (catch & re-launch)
+- Pause menu (ESC/P → Resume / Restart / Menu)
+- Ball aim-guide dotted line before launch
+- Brick HP indicators on tough bricks  ·  Combo meter bar toward next ×8 milestone
 
 ---
 
 ## 🎮 POWER-UPS & BOOSTERS (drops from bricks)
 
-1. 🔥 **Double Ball** — splits current ball into 2 identical balls; both stay alive
+1. ✅ 🔥 **Double Ball** — splits current ball into 2 identical balls; both stay alive *(shipped: `multi_ball`)*
 2. 🔥 **Triple Ball** — splits into 3 balls at 120° spread
-3. 🔥 **Multi-Ball Storm** — spawns 6 balls in a fan; chaos mode
+3. 🔶 🔥 **Multi-Ball Storm** — spawns 6 balls in a fan; chaos mode *(partial: ball cap is 6, fan spawn TODO)*
 4. **Huge Ball** — ball radius ×3 for 10s; easier to hit paddle
 5. **Tiny Ball** — ball radius ÷3, moves faster, fits through gaps
 6. **Ghost Ball** — passes through bricks dealing damage without bouncing (1s of phase-through)
 7. **Laser Ball** — ball leaves a laser trail that burns bricks it passes near
 8. **Gravity Ball** — ball curves downward like a real ball, hard mode
-9. **Sticky Ball (Magnet Catch)** — ball sticks to paddle on contact; re-launch manually
+9. ✅ **Sticky Ball (Magnet Catch)** — ball sticks to paddle on contact; re-launch manually *(shipped)*
 10. 🔥 **Wide Paddle** — already exists, but add stacking (up to 3× width)
 11. **Narrow Paddle** — challenge drop: paddle shrinks, score ×2 for the round
 12. **Infinite Paddle** — paddle spans full width for 5s; god mode brief
 13. **Speed Boost** — ball speed +40% for 8s
 14. **Slow Motion** — everything slows to 50% for 6s; strategic window
 15. 🔥 **Shield Wall** — a full-width barrier 100px above the bottom; ball bounces off it once
-16. **Double Score** — all brick points ×2 for 15s
+16. ✅ **Double Score** — all brick points ×2 for 15s *(shipped: `star`)*
 17. **Coin Magnet** — all drops fly toward paddle for 12s
-18. **Bomb** — explodes on contact, destroys a 3×3 cluster of bricks instantly
-19. 🔥 **Row Buster** — destroys the entire bottom row of bricks
+18. ✅ **Bomb** — explodes on contact, destroys a 3×3 cluster of bricks instantly *(shipped)*
+19. ✅ 🔥 **Row Buster** — destroys the entire bottom row of bricks *(shipped: `rocket`)*
 20. **Column Buster** — destroys a random full column top-to-bottom
 21. 💎 **Lightning Strike** — bolt hits 5 random bricks, each takes 3 damage
 22. 💎 **Meteor Rain** — 8 meteors fall and deal 2 damage each to random bricks
@@ -147,15 +159,15 @@
 
 ## 🛠️ TECHNICAL & UX
 
-101. **Pause menu** — ESC opens pause with Resume / Restart / Quit options
+101. ✅ **Pause menu** — ESC opens pause with Resume / Restart / Quit options *(shipped)*
 102. **Settings screen** — volume, ball speed, colorblind mode, language toggle
 103. **Colorblind mode** — swap brick colors to colorblind-safe palette
 104. **FPS counter** — dev toggle (F3) to show FPS overlay
 105. **Tutorial overlay** — first run: animated arrow shows "move paddle → press SPACE"
-106. **Ball preview line** — dotted line showing ball trajectory before launch
+106. ✅ **Ball preview line** — dotted line showing ball trajectory before launch *(shipped: aim guide)*
 107. **Slow-mo launch** — first 0.5s after launch runs at 30% speed (easy aim window)
-108. **Brick HP indicators** — small number on each brick showing remaining HP
-109. **Combo meter UI** — visual bar that fills toward next ×8 combo milestone
+108. ✅ **Brick HP indicators** — small number on each brick showing remaining HP *(shipped: tough bricks)*
+109. ✅ **Combo meter UI** — visual bar that fills toward next ×8 combo milestone *(shipped)*
 110. **Round preview** — show the brick grid layout before round starts (1s preview)
 
 ---

@@ -24,8 +24,15 @@ class GameState:
         self.round  = 1
         self.combo  = 0
         self.mult   = 1.0     # score multiplier (star power-up)
+        self.star_t = 0.0     # seconds remaining on ×2 star multiplier
         self.coins  = {"bronze": 0, "silver": 0, "gold": 0, "gem": 0}
         self.powerups: dict[str, bool] = {}
+
+    def update_timers(self, dt: float) -> None:
+        if self.star_t > 0:
+            self.star_t = max(0.0, self.star_t - dt)
+            if self.star_t <= 0:
+                self.mult = 1.0
 
     def add_score(self, pts: int) -> int:
         earned = int(pts * self.mult * (1 + self.combo * 0.05))
