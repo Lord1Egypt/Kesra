@@ -15,6 +15,7 @@ class GameState:
         self.best_round = 1
         self.auto_play  = False
         self.speed_idx  = 1        # index into SPEEDS; default 1.0×
+        self.god_mode   = False    # Konami easter egg — session-only, not persisted
         self.load_persistent()
 
     @property
@@ -30,6 +31,7 @@ class GameState:
         si = int(d.get("speed_idx", self.speed_idx))
         self.speed_idx  = si if 0 <= si < len(self.SPEEDS) else 1
         self.muted      = bool(d.get("muted", False))
+        self.tut_done   = bool(d.get("tut_done", False))
         self.unlocked   = set(d.get("unlocked", []))
         self.stats = {
             "bricks_total": int(d.get("bricks_total", 0)),
@@ -46,6 +48,7 @@ class GameState:
             "auto_play":  self.auto_play,
             "speed_idx":  self.speed_idx,
             "muted":      self.muted,
+            "tut_done":   self.tut_done,
             "unlocked":   sorted(self.unlocked),
             **self.stats,
         })

@@ -62,6 +62,9 @@ def _fonts():
 # ── MENU ──────────────────────────────────────────────────────────────────────
 class MenuScene:
     _SPEED_LABELS = ["½×", "1×", "1.5×", "2×"]
+    _KONAMI = [pygame.K_UP, pygame.K_UP, pygame.K_DOWN, pygame.K_DOWN,
+               pygame.K_LEFT, pygame.K_RIGHT, pygame.K_LEFT, pygame.K_RIGHT,
+               pygame.K_b, pygame.K_a]
 
     def __init__(self, gs: GameState):
         self.gs    = gs
@@ -69,6 +72,8 @@ class MenuScene:
         self.f_big, self.f_med, self.f_sm, self.f_tiny, self.f_ar, _ = _fonts()
         self._bg   = get_bg(0)
         self.show_ach = False
+        self._konami: list = []
+        self._god_msg_t = 0.0
 
     # ── button rects ──────────────────────────────────────────────────────────
     def _btn_play(self):   return pygame.Rect(W // 2 - 110, H // 2 + 30, 220, 48)
@@ -85,6 +90,7 @@ class MenuScene:
 
     def update(self, dt: float, events: list) -> str | None:
         self.t += dt
+        self._god_msg_t = max(0.0, self._god_msg_t - dt)
         for ev in events:
             # achievements panel intercepts all input while open
             if self.show_ach:
@@ -94,6 +100,16 @@ class MenuScene:
                     self.show_ach = False
                 continue
             if ev.type == pygame.KEYDOWN:
+                # Konami code → God Mode (checked first so the final 'A' isn't
+                # swallowed by the achievements panel)
+                self._konami.append(ev.key)
+                self._konami = self._konami[-len(self._KONAMI):]
+                if self._konami == self._KONAMI:
+                    self.gs.god_mode = True
+                    self._god_msg_t  = 3.0
+                    self._konami     = []
+                    audio.play("power")
+                    continue
                 if ev.key in (pygame.K_SPACE, pygame.K_RETURN):
                     return "play"
                 if ev.key == pygame.K_a:
@@ -184,6 +200,14 @@ class MenuScene:
         snd = "🔇 muted" if self.gs.muted else "🔊 sound on"
         hint = self.f_tiny.render(f"← → / drag  ·  SPACE launch  ·  M {snd}  ·  ESC quit", True, C_DIM)
         surf.blit(hint, hint.get_rect(center=(W // 2, H - 24)))
+
+        # God Mode unlock flash / active badge
+        if self._god_msg_t > 0:
+            gm = self.f_med.render("👑  GOD MODE UNLOCKED", True, C_GOLD)
+            surf.blit(gm, gm.get_rect(center=(W // 2, 30)))
+        elif self.gs.god_mode:
+            gm = self.f_tiny.render("👑 GOD MODE", True, C_GOLD)
+            surf.blit(gm, gm.get_rect(topleft=(10, 10)))
 
         if self.show_ach:
             self._draw_achievements(surf)
@@ -323,9 +347,14 @@ class PlayScene:
         return self.balls[0]
 
     def _launch_all_attached(self) -> None:
+        launched = False
         for b in self.balls:
             if b.attached:
                 b.launch(random.uniform(-80, -100))
+                launched = True
+        if launched and not self.gs.tut_done:
+            self.gs.tut_done = True
+            self.gs.save_persistent()
 
     def _spawn_multiball(self) -> None:
         """Clone every live ball into the air (up to MAX_BALLS) with a spread."""
@@ -383,6 +412,9 @@ class PlayScene:
                     self.paddle.rect.top - BALL_R - 1,
                     color=accent)
         ball.attached = True
+        if self.gs.god_mode:                 # Konami: slow permanent fireball
+            ball.fireball = True
+            ball.speed    = BALL_SPEED * 0.7
         self.balls = [ball]
         self._auto_launch_timer = 0.0
 
@@ -776,6 +808,11 @@ class PlayScene:
         if not self.gs.auto_play and any(b.attached for b in self.balls):
             self._draw_aim_guide(scene)
 
+        # first-run tutorial hint (until the very first launch)
+        if not self.gs.tut_done and not self.gs.auto_play and self.gs.round == 1 \
+                and any(b.attached for b in self.balls):
+            self._draw_tutorial(scene)
+
         for b in self.balls:
             b.draw(scene, self.t)
 
@@ -819,6 +856,19 @@ class PlayScene:
             dot = pygame.Surface((r * 2, r * 2), pygame.SRCALPHA)
             pygame.draw.circle(dot, (255, 255, 255, max(20, 120 - i * 12)), (r, r), r)
             surf.blit(dot, (int(ball.x) - r, int(y) - r))
+
+    def _draw_tutorial(self, surf: pygame.Surface) -> None:
+        pulse = 0.5 + 0.5 * math.sin(self.t * 3)
+        col   = (255, int(220 * pulse + 35), 120)
+        l1 = self.f_sm.render("← →  or drag to move", True, col)
+        l2 = self.f_med.render("SPACE / tap to launch", True, C_GOLD)
+        surf.blit(l1, l1.get_rect(center=(W // 2, H // 2 - 30)))
+        surf.blit(l2, l2.get_rect(center=(W // 2, H // 2 + 6)))
+        # animated down-arrow pointing at the paddle
+        ay = self.paddle.rect.top - 40 - int(6 * pulse)
+        cx = int(self.paddle.centerx)
+        pygame.draw.polygon(surf, C_GOLD,
+                            [(cx - 9, ay), (cx + 9, ay), (cx, ay + 12)])
 
     def _draw_pause(self, surf: pygame.Surface) -> None:
         ov = pygame.Surface((W, H), pygame.SRCALPHA)
@@ -879,6 +929,9 @@ class PlayScene:
         if len(self.balls) > 1:
             mb = self.f_tiny.render(f"● ×{len(self.balls)}", True, (255, 220, 80))
             surf.blit(mb, (10, y)); y -= 18
+        if self.gs.god_mode:
+            gm = self.f_tiny.render("👑 GOD MODE", True, C_GOLD)
+            surf.blit(gm, (10, y)); y -= 18
 
         # speed + auto-play pill (top-right, below hearts)
         spd_str = GameState.SPEEDS[self.gs.speed_idx]

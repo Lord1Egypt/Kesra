@@ -519,7 +519,7 @@ drifting out of sync).
 ## 🔥 EXTRA — Hidden Content (لي حب يكتشف)
 
 ### 🥚 Easter Eggs
-- **Konami Code** (↑↑↓↓←→←→BA) → Unlock **God Mode** (كرة نارية عمالة على بطئ)
+- ✅ **Konami Code** (↑↑↓↓←→←→BA) → Unlock **God Mode** (كرة نارية عمالة على بطئ) *(shipped — enter on the menu)*
 - **"Mo Salah"** مكتوب بالهيروغليفي في Level 7-6 → يعطيك **Speed Boost**
 - تكتب اسمك **"Lord1Egypt"** في الشاشة الرئيسية → تفتح **Pyramid Ship** (paddle على شكل هرم)
 - تكسر كل البلوكات في Level من غير ما الكرة تلمس البتزل → تفتح **Secret Level: Atlantis**

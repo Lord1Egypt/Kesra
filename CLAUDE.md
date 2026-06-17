@@ -74,6 +74,8 @@ python -m pygbag --build --app_name kesra main.py
 - Round-clear victory fountain + "ROUND CLEAR" float; 500+ point bricks use the larger popup font
 - Achievements: 14 unlockable (achievements.py), toast on unlock in-game, menu panel via 'A' key;
   lifetime stats (bricks/drops/best_combo/boss_clears/max_balls) + unlock set persisted in save
+- First-run tutorial overlay (persisted `tut_done`); Konami code on the menu enables session-only
+  God Mode (gs.god_mode) — balls spawn as slow permanent fireballs
 - Drops: bronze/silver/gold coins, diamond(+1k), heart, shield, wide, fireball, magnet,
   slow, multi_ball, star(×2 score), bomb(3×3), rocket(row buster)
 - Multi-ball: `PlayScene.balls` is a list (cap `MAX_BALLS=6`); life lost only when ALL balls fall
