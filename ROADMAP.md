@@ -71,7 +71,7 @@ Core invariants:
 
 ### Phase 3 — Meta-progression
 - [ ] Shop (paddle/ball skins) wired to persistent coins
-- [ ] Achievements
+- [x] Achievements — 14 unlockable, toast on unlock, menu panel (A); stats persisted in save
 - [ ] Daily/weekly challenge modifiers
 - [x] Save to localStorage (web) / file (desktop) — `storage.py`; persists best score/round + settings
 

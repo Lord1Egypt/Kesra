@@ -132,7 +132,7 @@
 83. **Ball Upgrades** — buy faster base speed or bigger ball permanently
 84. **Starting Lives Upgrade** — spend coins to start with 4 or 5 lives
 85. **Combo Shield** — buy: losing the ball doesn't reset combo (passive)
-86. **Achievements System** — 30+ achievements with gold/silver/bronze badges
+86. ✅ **Achievements System** — 14 achievements, toast on unlock, menu panel (press A) *(shipped: `achievements.py`)*
 87. **Daily Challenge** — fixed seed round config, global leaderboard for that day
 88. **Weekly Boss Rush** — survive 9 consecutive boss rounds; special reward
 89. **Prestige System** — after round 99, reset for a permanent bonus multiplier

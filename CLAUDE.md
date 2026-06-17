@@ -31,6 +31,7 @@ entities.py    Ball, Paddle, Brick, Drop classes
 scenes.py      MenuScene, PlayScene, GameOverScene
 state.py       GameState: score/lives/combo/coins/powerups; add_score(), lose_life(), etc.
 storage.py     cross-platform persistence: browser localStorage → JSON file → in-memory
+achievements.py  ACHIEVEMENTS list (id/name/desc/check); GameState tracks stats + unlocks
 assets/fonts/Cairo.ttf   Arabic TTF — loaded by scenes._fonts() for proper كِسرة rendering
 ```
 
@@ -63,6 +64,8 @@ python -m pygbag --build --app_name kesra main.py
 - Special bricks (data-driven via levelgen `special` field): explosive (chain-capped 3 deep),
   cursed (shrinks paddle), gift (guaranteed good drop) — geometric badge drawn by gfx.draw_special_mark
 - Round-clear victory fountain + "ROUND CLEAR" float; 500+ point bricks use the larger popup font
+- Achievements: 14 unlockable (achievements.py), toast on unlock in-game, menu panel via 'A' key;
+  lifetime stats (bricks/drops/best_combo/boss_clears/max_balls) + unlock set persisted in save
 - Drops: bronze/silver/gold coins, diamond(+1k), heart, shield, wide, fireball, magnet,
   slow, multi_ball, star(×2 score), bomb(3×3), rocket(row buster)
 - Multi-ball: `PlayScene.balls` is a list (cap `MAX_BALLS=6`); life lost only when ALL balls fall
