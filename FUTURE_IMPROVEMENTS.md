@@ -21,6 +21,7 @@
 - Procedural audio (zero-dep synth): paddle, brick (combo-pitched), coin, power-up,
   combo, bomb, life-lost, round-clear, game-over — M to mute (persisted)
 - Python CI: headless smoke test (11 checks) replaces the dead Godot workflow
+- First-run tutorial overlay (persisted) + Konami-code 👑 God Mode easter egg
 
 ---
 
@@ -170,7 +171,7 @@
 102. 🔶 **Settings screen** — mute (M key, persisted) + speed tabs done; full screen (colorblind/language) TODO
 103. **Colorblind mode** — swap brick colors to colorblind-safe palette
 104. **FPS counter** — dev toggle (F3) to show FPS overlay
-105. **Tutorial overlay** — first run: animated arrow shows "move paddle → press SPACE"
+105. ✅ **Tutorial overlay** — first run: animated arrow + "move / press SPACE" (persisted) *(shipped)*
 106. ✅ **Ball preview line** — dotted line showing ball trajectory before launch *(shipped: aim guide)*
 107. **Slow-mo launch** — first 0.5s after launch runs at 30% speed (easy aim window)
 108. ✅ **Brick HP indicators** — small number on each brick showing remaining HP *(shipped: tough bricks)*
