@@ -38,8 +38,15 @@ assets/fonts/Cairo.ttf   Arabic TTF — loaded by scenes._fonts() for proper ك�
 ## How to run / verify locally
 ```bash
 pip install pygame-ce
-python main.py          # desktop run
+python main.py            # desktop run
+python tools/test_smoke.py   # headless smoke test (10 checks, exits 0 on success)
 ```
+
+CI (`.github/workflows/ci-cd.yml`) runs `compileall` + `tools/test_smoke.py` on every
+push/PR. **Run the smoke test before every PR** — it covers menu, every drop type, pause,
+bomb/rocket, multi-ball cap, special bricks, achievements+persistence, boss round, a 6k-frame
+auto-play soak, and game-over. (The old Godot `ci-cd.yml` was deleted in the engine switch's
+cleanup — it was failing every push trying to export Godot presets.)
 
 ### Headless simulation (no display — for CI / testing)
 ```python
