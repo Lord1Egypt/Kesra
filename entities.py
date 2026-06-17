@@ -213,8 +213,16 @@ class Brick:
         self.color   = tuple(data["color"])
         self.is_boss = data.get("is_boss", False)
         self.drop_ch = data.get("drop_chance", 0.08)
+        self.special = data.get("special")     # None | "explosive" | "gift" | "cursed"
         self.alive   = True
         self._hit_t  = 0.0    # white-flash timer
+
+    # marker colour drawn over special bricks
+    _SPECIAL_GLOW = {
+        "explosive": (255, 120,  20),
+        "gift":      (80, 220, 120),
+        "cursed":    (180,  40, 220),
+    }
 
     def hit(self, dmg: int = 1) -> bool:
         """Returns True if destroyed."""
@@ -233,9 +241,18 @@ class Brick:
         if self._hit_t > 0:
             t   = self._hit_t / 0.12
             col = tuple(int(c + (255 - c) * t * 0.7) for c in self.color)
-        glow = (255, 215, 0) if self.is_boss else (
-               (255, 100, 0) if self.color == (255, 195, 0) else None)
+        if self.special:
+            glow = self._SPECIAL_GLOW[self.special]
+        elif self.is_boss:
+            glow = (255, 215, 0)
+        elif self.color == (255, 195, 0):
+            glow = (255, 100, 0)
+        else:
+            glow = None
         gfx.draw_brick(surf, self.rect, col, self.hp, self.max_hp, glow)
+        if self.special:
+            gfx.draw_special_mark(surf, self.rect, self.special,
+                                  self._SPECIAL_GLOW[self.special])
 
 
 # ── Drop ──────────────────────────────────────────────────────────────────────

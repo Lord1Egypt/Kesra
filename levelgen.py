@@ -105,6 +105,24 @@ def _pick_tier(diff: float, row_depth: float) -> dict:
     return BRICK_TIERS[-1]
 
 
+# special brick mechanics — (type, spawn weight)
+_SPECIALS = [
+    ("explosive", 0.05),   # destroying it damages all neighbours
+    ("gift",      0.03),   # guaranteed good drop on break
+    ("cursed",    0.03),   # shrinks the paddle when broken
+]
+
+
+def _roll_special() -> str | None:
+    r = random.random()
+    acc = 0.0
+    for name, w in _SPECIALS:
+        acc += w
+        if r < acc:
+            return name
+    return None
+
+
 def _brick_cell(tier: dict, diff: float) -> dict:
     hp = max(1, round(tier["hp"] * (1.0 + (diff - 1.0) * 0.3)))
     return {
@@ -115,4 +133,5 @@ def _brick_cell(tier: dict, diff: float) -> dict:
         "color":       tier["color"],
         "is_boss":     False,
         "drop_chance": 0.08 + (diff - 1.0) * 0.005,
+        "special":     _roll_special(),
     }

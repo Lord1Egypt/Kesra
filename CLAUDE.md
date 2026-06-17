@@ -60,6 +60,9 @@ python -m pygbag --build --app_name kesra main.py
 - Ball physics: wall bounces, paddle angle-based launch, brick overlap side-detection
 - Particle system: burst, sparks, ambient floating sparkles, rising float-text, ring shockwaves
 - 6 brick tiers (mud → obsidian), rainbow HSV trail on ball, per-biome atmospheric glow
+- Special bricks (data-driven via levelgen `special` field): explosive (chain-capped 3 deep),
+  cursed (shrinks paddle), gift (guaranteed good drop) — geometric badge drawn by gfx.draw_special_mark
+- Round-clear victory fountain + "ROUND CLEAR" float; 500+ point bricks use the larger popup font
 - Drops: bronze/silver/gold coins, diamond(+1k), heart, shield, wide, fireball, magnet,
   slow, multi_ball, star(×2 score), bomb(3×3), rocket(row buster)
 - Multi-ball: `PlayScene.balls` is a list (cap `MAX_BALLS=6`); life lost only when ALL balls fall
