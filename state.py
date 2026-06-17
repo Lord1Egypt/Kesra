@@ -2,6 +2,7 @@
 state.py — shared game state (score, lives, combo, round)
 """
 import storage
+from achievements import ACHIEVEMENTS
 
 
 class GameState:
@@ -28,6 +29,14 @@ class GameState:
         self.auto_play  = bool(d.get("auto_play", self.auto_play))
         si = int(d.get("speed_idx", self.speed_idx))
         self.speed_idx  = si if 0 <= si < len(self.SPEEDS) else 1
+        self.unlocked   = set(d.get("unlocked", []))
+        self.stats = {
+            "bricks_total": int(d.get("bricks_total", 0)),
+            "drops_total":  int(d.get("drops_total", 0)),
+            "best_combo":   int(d.get("best_combo", 0)),
+            "boss_clears":  int(d.get("boss_clears", 0)),
+            "max_balls":    int(d.get("max_balls", 0)),
+        }
 
     def save_persistent(self) -> None:
         storage.save({
@@ -35,7 +44,47 @@ class GameState:
             "best_round": self.best_round,
             "auto_play":  self.auto_play,
             "speed_idx":  self.speed_idx,
+            "unlocked":   sorted(self.unlocked),
+            **self.stats,
         })
+
+    # ── achievements ────────────────────────────────────────────────────────────
+    def check_achievements(self, **ctx) -> list:
+        """Evaluate all locked achievements against current stats; persist + return new."""
+        snap = dict(self.stats)
+        snap["score"]      = self.score
+        snap["round"]      = self.round
+        snap["best_round"] = self.best_round
+        snap.update(ctx)
+        newly = []
+        for a in ACHIEVEMENTS:
+            if a["id"] not in self.unlocked and a["check"](snap):
+                self.unlocked.add(a["id"])
+                newly.append(a)
+        if newly:
+            self.save_persistent()
+        return newly
+
+    def record_brick(self) -> list:
+        self.stats["bricks_total"] += 1
+        return self.check_achievements()
+
+    def record_drop(self) -> list:
+        self.stats["drops_total"] += 1
+        return self.check_achievements()
+
+    def record_combo(self, c: int) -> list:
+        self.stats["best_combo"] = max(self.stats["best_combo"], c)
+        return self.check_achievements(combo=c)
+
+    def record_balls(self, n: int) -> list:
+        self.stats["max_balls"] = max(self.stats["max_balls"], n)
+        return self.check_achievements(balls=n)
+
+    def record_round_clear(self, cleared_round: int, is_boss: bool) -> list:
+        if is_boss:
+            self.stats["boss_clears"] += 1
+        return self.check_achievements(round=cleared_round, is_boss_clear=is_boss)
 
     def reset(self):
         self.score  = 0

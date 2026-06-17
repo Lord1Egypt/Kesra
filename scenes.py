@@ -11,6 +11,7 @@ from levelgen import generate_round
 from particles import ParticleSystem, FloatTextSystem, RingSystem, AmbientSystem
 import gfx
 from rtl import ar
+from achievements import ACHIEVEMENTS, TOTAL
 
 
 # ── shared starfield ──────────────────────────────────────────────────────────
@@ -66,6 +67,7 @@ class MenuScene:
         self.t     = 0.0
         self.f_big, self.f_med, self.f_sm, self.f_tiny, self.f_ar, _ = _fonts()
         self._bg   = get_bg(0)
+        self.show_ach = False
 
     # ── button rects ──────────────────────────────────────────────────────────
     def _btn_play(self):   return pygame.Rect(W // 2 - 110, H // 2 + 30, 220, 48)
@@ -83,9 +85,18 @@ class MenuScene:
     def update(self, dt: float, events: list) -> str | None:
         self.t += dt
         for ev in events:
+            # achievements panel intercepts all input while open
+            if self.show_ach:
+                if ev.type == pygame.KEYDOWN and ev.key in (pygame.K_a, pygame.K_ESCAPE):
+                    self.show_ach = False
+                elif ev.type == pygame.MOUSEBUTTONDOWN:
+                    self.show_ach = False
+                continue
             if ev.type == pygame.KEYDOWN:
                 if ev.key in (pygame.K_SPACE, pygame.K_RETURN):
                     return "play"
+                if ev.key == pygame.K_a:
+                    self.show_ach = True
                 if ev.key == pygame.K_ESCAPE:
                     return "quit"
             if ev.type == pygame.MOUSEBUTTONDOWN:
@@ -160,8 +171,36 @@ class MenuScene:
             lbl  = self.f_tiny.render(self._SPEED_LABELS[i], True, lc)
             surf.blit(lbl, lbl.get_rect(center=r.center))
 
+        # achievements counter + hint
+        n_unlocked = len(self.gs.unlocked)
+        ach = self.f_tiny.render(f"🏆 Achievements  {n_unlocked}/{TOTAL}   (press A)", True, C_GOLD_D)
+        surf.blit(ach, ach.get_rect(center=(W // 2, H // 2 + 178)))
+
         hint = self.f_tiny.render("← → / drag to move  |  SPACE to launch  |  ESC to quit", True, C_DIM)
         surf.blit(hint, hint.get_rect(center=(W // 2, H - 24)))
+
+        if self.show_ach:
+            self._draw_achievements(surf)
+
+    def _draw_achievements(self, surf: pygame.Surface) -> None:
+        ov = pygame.Surface((W, H), pygame.SRCALPHA)
+        ov.fill((4, 4, 14, 235))
+        surf.blit(ov, (0, 0))
+        n_unlocked = len(self.gs.unlocked)
+        title = self.f_med.render(f"🏆 ACHIEVEMENTS  {n_unlocked}/{TOTAL}", True, C_GOLD)
+        surf.blit(title, title.get_rect(center=(W // 2, 40)))
+        y = 78
+        for a in ACHIEVEMENTS:
+            got = a["id"] in self.gs.unlocked
+            mark = "✓" if got else "🔒"
+            col  = C_GOLD if got else (110, 100, 80)
+            name = self.f_sm.render(f"{mark} {a['name']}", True, col)
+            surf.blit(name, (28, y))
+            desc = self.f_tiny.render(a["desc"], True, (150, 140, 110) if got else (80, 75, 60))
+            surf.blit(desc, (28, y + 22))
+            y += 44
+        close = self.f_tiny.render("press A / ESC / click to close", True, C_DIM)
+        surf.blit(close, close.get_rect(center=(W // 2, H - 20)))
 
     def _draw_pyramids(self, surf: pygame.Surface) -> None:
         t   = self.t * 0.4
@@ -299,6 +338,7 @@ class PlayScene:
             nb.launch(ang)
             new.append(nb)
         self.balls += new
+        self._toast(self.gs.record_balls(len(self.balls)))
 
     # ── round management ──────────────────────────────────────────────────────
     def _start_round(self) -> None:
@@ -459,6 +499,7 @@ class PlayScene:
                 b.bounce_off_paddle(self.paddle.rect)
             self.paddle.on_ball_hit()
             self.gs.add_combo()
+            self._toast(self.gs.record_combo(self.gs.combo))
             self.particles.spark(b.x, b.y, b.color, n=5, speed=60)
 
         # bricks
@@ -482,6 +523,7 @@ class PlayScene:
 
     def _on_brick_killed(self, brick: Brick, pts: int, _depth: int = 0) -> None:
         cx, cy = brick.rect.centerx, brick.rect.centery
+        self._toast(self.gs.record_brick())
         # big particle burst
         self.particles.burst(cx, cy, brick.color, n=22, speed=220, r=5, life=0.65)
         # second burst of white sparks
@@ -549,6 +591,7 @@ class PlayScene:
 
     def _collect_drop(self, drop: Drop) -> None:
         self.particles.burst(*drop.rect.center, drop.color, n=10, speed=100, r=3)
+        self._toast(self.gs.record_drop())
         t = drop.type
         if t == "bronze_coin":
             self.gs.add_score(10)
@@ -632,9 +675,18 @@ class PlayScene:
         self._destroy_bricks(row)
 
     def _next_round(self) -> None:
+        cleared_round = self.gs.round
+        cleared_boss  = self._round_data.get("is_boss", False)
         self.gs.next_round()
         self._start_round()
         self._victory_fountain()
+        self._toast(self.gs.record_round_clear(cleared_round, cleared_boss))
+
+    def _toast(self, newly: list) -> None:
+        """Show a celebratory float for each newly-unlocked achievement."""
+        for i, a in enumerate(newly):
+            self.floats.add(f"🏆 {a['name']}", W // 2, H // 2 + 60 + i * 28,
+                            (255, 230, 120), self.f_sm, 2.4)
 
     def _victory_fountain(self) -> None:
         """Gold particle fountain celebrating a cleared round (after the reset)."""
