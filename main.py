@@ -38,14 +38,17 @@ async def main():
         pygame.display.flip()
 
         if result == "quit":
+            gs.save_persistent()
             running = False
         elif result == "play":
+            gs.save_persistent()      # persist menu settings (speed / auto-play)
             scene_name = "play"
             scene      = PlayScene(gs)
         elif result == "menu":
             scene_name = "menu"
             scene      = MenuScene(gs)
         elif result == "game_over":
+            gs.save_persistent()      # persist new best score / round
             scene_name = "game_over"
             scene      = GameOverScene(gs)
         elif result == "restart":
