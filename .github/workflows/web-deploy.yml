@@ -30,6 +30,9 @@ jobs:
       - name: Build web export
         run: python -m pygbag --build --app_name kesra main.py
 
+      - name: Patch loading screen
+        run: python3 tools/patch_web.py build/web/index.html
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:

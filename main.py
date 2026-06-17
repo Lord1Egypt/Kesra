@@ -26,7 +26,7 @@ async def main():
     running = True
     while running:
         dt     = clock.tick(FPS) / 1000.0
-        dt     = min(dt, 0.05)   # cap at 50ms (avoid spiral-of-death on lag)
+        dt     = min(dt, 0.05) * gs.speed   # speed multiplier from menu
         events = pygame.event.get()
 
         for ev in events:
