@@ -29,6 +29,7 @@ class GameState:
         self.auto_play  = bool(d.get("auto_play", self.auto_play))
         si = int(d.get("speed_idx", self.speed_idx))
         self.speed_idx  = si if 0 <= si < len(self.SPEEDS) else 1
+        self.muted      = bool(d.get("muted", False))
         self.unlocked   = set(d.get("unlocked", []))
         self.stats = {
             "bricks_total": int(d.get("bricks_total", 0)),
@@ -44,6 +45,7 @@ class GameState:
             "best_round": self.best_round,
             "auto_play":  self.auto_play,
             "speed_idx":  self.speed_idx,
+            "muted":      self.muted,
             "unlocked":   sorted(self.unlocked),
             **self.stats,
         })

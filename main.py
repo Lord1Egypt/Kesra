@@ -11,6 +11,7 @@ import pygame
 from settings import W, H, FPS, TITLE
 from state import GameState
 from scenes import MenuScene, PlayScene, GameOverScene
+import audio
 
 
 async def main():
@@ -20,6 +21,8 @@ async def main():
     clock  = pygame.time.Clock()
 
     gs     = GameState()
+    audio.init()
+    audio.set_muted(gs.muted)
     scene_name = "menu"
     scene      = MenuScene(gs)
 

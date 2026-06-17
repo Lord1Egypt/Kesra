@@ -161,5 +161,17 @@ go.update(0.016, [])
 go.draw(SCREEN)
 ok("GameOver scene renders")
 
+# ── 11. Audio synthesis + playback (dummy driver) ────────────────────────────
+import audio  # noqa: E402
+audio.init()
+for _name in ("paddle", "coin", "power", "combo", "lose", "clear", "over", "boom"):
+    audio.play(_name)
+for _c in (0, 8, 16, 99):
+    audio.play_brick(_c)
+audio.set_muted(True)
+audio.play("paddle")          # muted → no-op, must not raise
+audio.set_muted(False)
+ok("Audio synthesis + playback (no crash)")
+
 print(f"\nALL SMOKE TESTS PASSED ({_passed} checks)")
 sys.exit(0)

@@ -32,6 +32,7 @@ scenes.py      MenuScene, PlayScene, GameOverScene
 state.py       GameState: score/lives/combo/coins/powerups; add_score(), lose_life(), etc.
 storage.py     cross-platform persistence: browser localStorage → JSON file → in-memory
 achievements.py  ACHIEVEMENTS list (id/name/desc/check); GameState tracks stats + unlocks
+audio.py       procedural SFX (zero-dep array+mixer synth); init()/play()/play_brick()/set_muted()
 assets/fonts/Cairo.ttf   Arabic TTF — loaded by scenes._fonts() for proper كِسرة rendering
 ```
 
@@ -87,8 +88,9 @@ python -m pygbag --build --app_name kesra main.py
 
 ## Known gaps / honest limitations
 - Magnet is now a sticky-catch paddle (no mid-air attraction physics — that's a separate future item)
-- No save/shop/achievements yet (Phase 3 in ROADMAP.md)
-- No audio yet
+- No shop yet (Phase 3 in ROADMAP.md); save + achievements are done
+- Audio is procedural SFX only — no music tracks yet; mixer may be silent in WASM until a
+  user gesture, by design it no-ops rather than crashing (`audio.enabled` stays False)
 - Web deploy is set up but Pygbag WASM requires the game to `await asyncio.sleep(0)` every frame
   — already in main.py so this is satisfied
 - Mobile (Android/iOS) not started yet (Phase 4)

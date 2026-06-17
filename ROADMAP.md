@@ -67,7 +67,10 @@ Core invariants:
   **TODO:** laser, ghost-ball, lightning, meteor, whirlwind, eye-of-horus (see FUTURE_IMPROVEMENTS.md)
 - [ ] Per-biome particle theme (sand/fire/gold/stardust)
 - [ ] Boss telegraphing + multi-phase weak points
-- [ ] Sound effects + per-biome music
+- [x] Sound effects — procedural zero-dep synth (`audio.py`): paddle / brick (combo-pitched) /
+  coin / power-up / combo / bomb / life-lost / round-clear / game-over; M to mute (persisted).
+  Degrades to silent no-op where the mixer is unavailable (WASM pre-gesture).
+- [ ] Per-biome music (looping themes) — still TODO
 
 ### Phase 3 — Meta-progression
 - [ ] Shop (paddle/ball skins) wired to persistent coins
